@@ -10,8 +10,7 @@
         "db:list": "ts-node --project tsconfig.cjs.json scripts/postgres/list-dbs.ts"
     },
     "prisma": {
-        "schema": "prisma/schema.prisma",
-        "seed": "ts-node --project tsconfig.cjs.json prisma/seed.ts"
+        "schema": "prisma/schema.prisma"
     },
     "dependencies": {
         "@prisma/client": "^6.12.0",
