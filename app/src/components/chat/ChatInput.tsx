@@ -18,7 +18,7 @@ export default function ChatInput() {
                             e.preventDefault();
                         }}
                     >
-                        <ResponsiveButton className="">
+                        <ResponsiveButton>
                             <SendHorizontal className="w-5 h-5" />
                         </ResponsiveButton>
                     </button>

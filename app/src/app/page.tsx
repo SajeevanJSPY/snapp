@@ -16,6 +16,7 @@ export default function Page() {
             opacity: 0,
             position: 'absolute' as const,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         animate: (direction: number) => ({
             x: 0,
             opacity: 1,

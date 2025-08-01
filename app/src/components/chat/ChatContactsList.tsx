@@ -9,12 +9,12 @@ import { users as User } from "@/generated/prisma";
 import { MessageCircle, Users2 } from "lucide-react";
 
 export function ChatContactList() {
-    const { isChatBox, setIsChatBox, setSelectedUser, selectedUser } = useChatContext();
+    const { isChatBox, setIsChatBox, setSelectedUser } = useChatContext();
     const [contactsList, setContactsList] = useState<User[]>([]);
 
     useEffect(() => {
         // TODO: change back this logic, it is temporary
-        let wholeList: User[] = [];
+        const wholeList: User[] = [];
         fetch('api/contacts')
             .then(res => res.json())
             .then(r => {
@@ -63,7 +63,7 @@ export function ChatContactList() {
                     {contactsList.map((contact) => (
                         <motion.li
                             whileHover={{ scale: 1.05 }}
-                            onClick={e => {
+                            onClick={(e: React.MouseEvent<HTMLLIElement>) => {
                                 e.preventDefault();
                                 setSelectedUser(contact);
                                 setIsChatBox(true);
