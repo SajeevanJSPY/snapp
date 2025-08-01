@@ -1,13 +1,25 @@
+import { useChatContext } from "@/hooks/ChatUI";
 import ChatBox from "./ChatBox";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
+import { MessageCircle } from "lucide-react";
 
 export default function Chat() {
+    const { selectedUser } = useChatContext();
+
     return (
-        <main className="relative bg-base-100 bg-red-500 w-full h-screen flex flex-col">
-            <ChatHeader />
-            <ChatBox />
-            <ChatInput />
-        </main>
+        <>
+            {selectedUser ?
+                <div className="h-full flex flex-col bg-gradient-to-r from-[var(--color-info)] to-[var(--color-success)]">
+                    <ChatHeader />
+                    <ChatBox />
+                    <ChatInput />
+                </div>
+                :
+                <div className="h-full flex justify-center items-center bg-gradient-to-r from-[var(--color-info)] to-[var(--color-success)]">
+                    <MessageCircle />
+                </div>
+            }
+        </>
     );
 }

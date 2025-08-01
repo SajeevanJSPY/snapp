@@ -1,14 +1,31 @@
+import { SendHorizontal } from "lucide-react";
+import ResponsiveButton from "../common/Button";
+
 export default function ChatInput() {
     return (
-        <div className="bg-base-100 p-3 rounded-b-sm w-full">
-            <div className="relative">
-                <input type="text" placeholder="Type a message…"
-                    className="w-full text-xs text-gray-600 bg-white px-4 py-2 rounded-full border border-base-300 outline-none" />
-                <button
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 bg-purple-900 text-white rounded-full flex items-center justify-center">
-                    <i className="fa fa-chevron-right text-xs"></i>
-                </button>
-            </div>
+        <div className="rounded-b-sm w-full">
+            <form className="w-full px-2 py-2">
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Type a message…"
+                        className="w-full py-3 pl-4 pr-12 rounded-full border border-gray-300 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    />
+                    <button
+                        type="submit"
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-violet-600 hover:text-violet-800"
+                        onClick={e => {
+                            e.preventDefault();
+                        }}
+                    >
+                        <ResponsiveButton className="">
+                            <SendHorizontal className="w-5 h-5" />
+                        </ResponsiveButton>
+                    </button>
+                </div>
+            </form>
+
         </div>
     );
 }
+

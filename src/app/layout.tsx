@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
 
-import { ChatUIProvider } from "@/context/ChatContext";
+import { ChatUIProvider } from "@/hooks/ChatUI";
 
 export const metadata: Metadata = {
     title: "Snapp",
@@ -22,7 +21,7 @@ export default function RootLayout({
                 <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
             </head>
 
-            <body className="min-h-screen max-w-screen">
+            <body className="h-screen max-w-screen">
                 <ChatUIProvider>
                     {children}
                 </ChatUIProvider>
