@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'motion/react';
 import Chat from '@/components/chat/Chat';
-import { useIsMobile } from '@/hooks/ScreenDetection';
+import { useIsMobile } from '@snapp/ui';
 import { useChatContext } from '@/hooks/ChatUI';
 import { ChatContactList } from '@/components/chat/ChatContactsList';
 

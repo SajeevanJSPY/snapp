@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { tailwindCssBreakpoints } from '../breakpoints';
 
 // detect screen size
 export function useIsMobile() {
     const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 640);
+        const checkMobile = () =>
+            setIsMobile(window.innerWidth < Number(tailwindCssBreakpoints.md));
         checkMobile();
 
         window.addEventListener('resize', checkMobile);
