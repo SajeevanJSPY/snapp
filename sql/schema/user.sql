@@ -7,8 +7,10 @@ CREATE TABLE users (
     last_login TIMESTAMP NOT NULL DEFAULT now(),
     is_active BOOLEAN DEFAULT TRUE
 );
+
 -- status of the device the user has been using
 CREATE TYPE device_status AS ENUM ('active', 'inactive', 'blocked');
+
 -- the user is only limited use 2 device max
 CREATE TABLE devices (
     device_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -19,6 +21,7 @@ CREATE TABLE devices (
     created_at TIMESTAMP DEFAULT now(),
     status device_status NOT NULL
 );
+
 CREATE TABLE sessions (
     session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id BIGINT REFERENCES users,
@@ -26,6 +29,7 @@ CREATE TABLE sessions (
     created_at TIMESTAMP DEFAULT now(),
     expired_at TIMESTAMP GENERATED ALWAYS AS (created_at + INTERVAL '5 days') STORED
 );
+
 CREATE TABLE user_contacts (
     user_contacts_id BIGSERIAL PRIMARY KEY,
     user_id BIGINT REFERENCES users,
@@ -36,8 +40,12 @@ CREATE TABLE user_contacts (
     UNIQUE (user_id, contact_id),
     CONSTRAINT owner_cannot_be_contact CHECK (user_id <> contact_id)
 );
+
 -- index
 CREATE INDEX idx_user_email ON users(email);
+
 CREATE INDEX idx_session_user_id ON sessions(user_id);
+
 CREATE INDEX idx_devices_user_id ON devices(user_id);
+
 CREATE INDEX idx_devices_status ON devices(status);

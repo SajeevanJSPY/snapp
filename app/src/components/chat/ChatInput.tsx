@@ -1,5 +1,5 @@
-import { SendHorizontal } from "lucide-react";
-import ResponsiveButton from "../common/Button";
+import { SendHorizontal } from 'lucide-react';
+import ResponsiveButton from '../common/Button';
 
 export default function ChatInput() {
     return (
@@ -24,8 +24,6 @@ export default function ChatInput() {
                     </button>
                 </div>
             </form>
-
         </div>
     );
 }
-

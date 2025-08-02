@@ -10,9 +10,12 @@
         "build": "turbo build run",
         "dev": "turbo build dev --filter=snapp-app --cwd=app",
         "build:app": "turbo run build --filter=snapp-app",
-        "check": "turbo build check-types"
+        "check": "turbo build check-types",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "devDependencies": {
+        "prettier": "^3.6.2",
         "turbo": "^2.5.5"
     },
     "packageManager": "pnpm@10.14.0"

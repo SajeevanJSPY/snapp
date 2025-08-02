@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { motion } from "motion/react";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { motion } from 'motion/react';
 
-import { useChatContext } from "@/hooks/ChatUI";
-import { users as User } from "@/generated/prisma";
-import { MessageCircle, Users2 } from "lucide-react";
+import { useChatContext } from '@/hooks/ChatUI';
+import { users as User } from '@/generated/prisma';
+import { MessageCircle, Users2 } from 'lucide-react';
 
 export function ChatContactList() {
     const { isChatBox, setIsChatBox, setSelectedUser } = useChatContext();
@@ -27,7 +27,7 @@ export function ChatContactList() {
                 setTimeout(() => {
                     setContactsList(wholeList);
                 }, 1000);
-            })
+            });
     }, []);
 
     return (
@@ -35,15 +35,16 @@ export function ChatContactList() {
             <div className="max-w-md mx-auto">
                 <div className="md:hidden flex justify-around shadow-sm py-1">
                     <button
-                        className={`text-sm flex items-center gap-2 px-4 py-2 rounded cursor-pointer ${!isChatBox ? "bg-violet-100 text-violet-700" : ""}`}
+                        className={`text-sm flex items-center gap-2 px-4 py-2 rounded cursor-pointer ${!isChatBox ? 'bg-violet-100 text-violet-700' : ''}`}
                         onClick={() => setIsChatBox(false)}
                     >
                         <Users2 className="w-4 h-4" />
                         Contacts
                     </button>
                     <button
-                        className={`text-sm flex items-center gap-2 px-4 py-2 rounded cursor-pointer ${isChatBox ? "bg-violet-100 text-violet-700" : ""
-                            }`}
+                        className={`text-sm flex items-center gap-2 px-4 py-2 rounded cursor-pointer ${
+                            isChatBox ? 'bg-violet-100 text-violet-700' : ''
+                        }`}
                         onClick={() => setIsChatBox(true)}
                     >
                         <MessageCircle className="w-4 h-4" />
@@ -60,7 +61,7 @@ export function ChatContactList() {
                 </div>
 
                 <ul className="space-y-3">
-                    {contactsList.map((contact) => (
+                    {contactsList.map(contact => (
                         <motion.li
                             whileHover={{ scale: 1.05 }}
                             onClick={(e: React.MouseEvent<HTMLLIElement>) => {
@@ -80,7 +81,9 @@ export function ChatContactList() {
                             />
                             <div className="flex-1">
                                 <p className="font-semibold">{contact.username}</p>
-                                <p className="text-sm text-base-content/60">{contact.is_active ? 'active' : 'inactive'}</p>
+                                <p className="text-sm text-base-content/60">
+                                    {contact.is_active ? 'active' : 'inactive'}
+                                </p>
                             </div>
                             <button className="text-primary hover:text-primary-focus transition">
                                 <i className="fa fa-comment"></i>

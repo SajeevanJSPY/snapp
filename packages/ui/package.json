@@ -1,12 +1,12 @@
 {
-  "name": "snapp-ui",
-  "version": "1.0.0",
-  "description": "snapp ui",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
-  "scripts": {},
-  "keywords": [],
-  "author": "sajeevan",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0"
+    "name": "snapp-ui",
+    "version": "1.0.0",
+    "description": "snapp ui",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {},
+    "keywords": [],
+    "author": "sajeevan",
+    "license": "ISC",
+    "packageManager": "pnpm@10.14.0"
 }

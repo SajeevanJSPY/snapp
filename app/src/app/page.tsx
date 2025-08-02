@@ -1,10 +1,10 @@
 'use client';
 
-import { motion, AnimatePresence } from "motion/react";
-import Chat from "@/components/chat/Chat";
-import { useIsMobile } from "@/hooks/ScreenDetection";
-import { useChatContext } from "@/hooks/ChatUI";
-import { ChatContactList } from "@/components/chat/ChatContactsList";
+import { motion, AnimatePresence } from 'motion/react';
+import Chat from '@/components/chat/Chat';
+import { useIsMobile } from '@/hooks/ScreenDetection';
+import { useChatContext } from '@/hooks/ChatUI';
+import { ChatContactList } from '@/components/chat/ChatContactsList';
 
 export default function Page() {
     const { isChatBox } = useChatContext();
@@ -74,7 +74,6 @@ export default function Page() {
                                 <section className="w-full h-full overflow-y-auto">
                                     <Chat />
                                 </section>
-
                             </motion.div>
                         )}
                     </AnimatePresence>
