@@ -47,3 +47,5 @@ postgres
 
 # turbo
 .turbo
+
+dist
