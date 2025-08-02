@@ -42,8 +42,6 @@ next-env.d.ts
 
 # prisma
 app/src/generated
-# postgres
-postgres
 
 # turbo
 .turbo

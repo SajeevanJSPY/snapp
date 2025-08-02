@@ -8,7 +8,7 @@ FROM
         'Tatakawanakereba, Katenai!',
         'rumbling500',
         '192.168.41.24',
-        'linux/firefox',
+        'linux/firefox'
     );
 
 SELECT
