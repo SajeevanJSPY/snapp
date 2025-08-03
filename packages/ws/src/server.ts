@@ -1,31 +1,27 @@
-import { createServer } from 'http';
+import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { WsConfig } from './config';
+import { WsEvents } from './events';
 
-const httpServer = createServer();
-
-const io = new Server(httpServer, {
-    cors: { origin: '*' },
-});
-
-io.on('connection', (socket: Socket) => {
-    console.log(`client connected : ${socket.id}`);
-
-    socket.on('ping', () => {
-        socket.emit('pong');
+export function setupWs(server: HttpServer) {
+    const io = new Server(server, {
+        cors: { origin: '*' },
     });
 
-    socket.on('message', (msg: string) => {
-        console.log('Received:', msg);
-        socket.emit('message', `Echo: ${msg}`);
-    });
+    io.on('connection', (socket: Socket) => {
+        console.log(`total clients : ${io.engine.clientsCount}`);
+        console.log(`client connected : ${socket.id}`);
 
-    socket.on('disconnect', () => {
-        console.log(`Client disconnected: ${socket.id}`);
-    });
-});
+        socket.on('ping', () => {
+            socket.emit('pong');
+        });
 
-const PORT = WsConfig.dev_port;
-httpServer.listen(PORT, () => {
-    console.log(`WebSocket server running at http://localhost:${PORT}`);
-});
+        socket.on(WsEvents.message, (msg: string) => {
+            console.log('received message:', msg);
+            socket.emit('message', `Echo: ${msg}`);
+        });
+
+        socket.on('disconnect', () => {
+            console.log(`Client disconnected: ${socket.id}`);
+        });
+    });
+}

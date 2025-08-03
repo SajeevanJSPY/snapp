@@ -1,3 +1,2 @@
-export * from './event';
+export * from './events';
 export * from './server';
-export * from './config';
