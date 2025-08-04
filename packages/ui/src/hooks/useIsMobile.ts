@@ -3,17 +3,25 @@
 import { useEffect, useState } from 'react';
 import { tailwindCssBreakpoints } from '../breakpoints';
 
-// detect screen size
 export function useIsMobile() {
-    const [isMobile, setIsMobile] = useState(true);
+    const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
-        const checkMobile = () =>
-            setIsMobile(window.innerWidth < Number(tailwindCssBreakpoints.md));
-        checkMobile();
+        if (typeof window === 'undefined') return;
 
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        const mediaQuery = window.matchMedia(`(max-width: ${tailwindCssBreakpoints.md - 1}px)`);
+
+        const updateIsMobile = (e: MediaQueryListEvent | MediaQueryList) => {
+            setIsMobile(e.matches);
+        };
+
+        // Initial check
+        updateIsMobile(mediaQuery);
+
+        // Listen to changes
+        mediaQuery.addEventListener('change', updateIsMobile);
+
+        return () => mediaQuery.removeEventListener('change', updateIsMobile);
     }, []);
 
     return isMobile;
