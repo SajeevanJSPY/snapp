@@ -1,4 +1,4 @@
-import ChatMessage from './ChatMesssage';
+import ChatMessage from './Message';
 
 export default function ChatBox() {
     return (

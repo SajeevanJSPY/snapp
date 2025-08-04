@@ -1,7 +1,7 @@
 import { useChatContext } from '@/hooks/ChatUI';
 import ChatBox from './ChatBox';
-import ChatHeader from './ChatHeader';
-import ChatInput from './ChatInput';
+import ChatHeader from './Header';
+import ChatInput from './Input';
 import { MessageCircle } from 'lucide-react';
 
 export default function Chat() {

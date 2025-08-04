@@ -4,9 +4,9 @@ import { useChatContext } from '@/hooks/ChatUI';
 import ResponsiveButton from '../common/Button';
 import Image from 'next/image';
 import { ChevronLeft } from 'lucide-react';
-import { useIsMobile } from '@/hooks/ScreenDetection';
+import { useIsMobile } from '@snapp/ui';
 
-export default function ChatHeader() {
+export default function ChatBoxHeader() {
     const { setIsChatBox, selectedUser } = useChatContext();
     const isMobile = useIsMobile();
 

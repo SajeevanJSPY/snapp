@@ -1,4 +1,4 @@
-export default function ChatMessage({ content, mine }: { content: string; mine: boolean }) {
+export default function ChatBoxMessage({ content, mine }: { content: string; mine: boolean }) {
     return (
         <>
             {mine ? (

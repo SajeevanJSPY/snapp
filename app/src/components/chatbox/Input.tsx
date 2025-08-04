@@ -1,7 +1,7 @@
 import { SendHorizontal } from 'lucide-react';
 import ResponsiveButton from '../common/Button';
 
-export default function ChatInput() {
+export default function ChatBoxInput() {
     return (
         <div className="rounded-b-sm w-full">
             <form className="w-full px-2 py-2">
