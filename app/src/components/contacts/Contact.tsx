@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { useChatContext } from '@/hooks/ChatUI';
-import { users as User } from '@/generated/prisma';
+import { User } from '@snapp/db';
 
 export default function Contact({ contact }: { contact: User }) {
     const { setIsChatBox, setSelectedUser } = useChatContext();

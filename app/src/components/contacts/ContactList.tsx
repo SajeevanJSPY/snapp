@@ -1,7 +1,7 @@
 'use client';
 
 import Contact from './Contact';
-import { users as User } from '@/generated/prisma';
+import { User } from '@snapp/db';
 
 export default function ContactList({ contacts }: { contacts: User[] }) {
     return (

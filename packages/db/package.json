@@ -1,5 +1,5 @@
 {
-    "name": "snapp-db",
+    "name": "@snapp/db",
     "version": "0.0.1",
     "description": "snapp database",
     "main": "src/index.ts",
@@ -7,18 +7,21 @@
     "scripts": {
         "up": "docker-compose up -d",
         "down": "docker-compose down -v",
-        "migrate": "dbmate migrate"
+        "migrate": "dbmate migrate",
+        "prisma:pull": "prisma db pull",
+        "prisma:generate": "prisma generate"
     },
     "keywords": [],
     "author": "sajeevan",
     "license": "ISC",
     "packageManager": "pnpm@10.14.0",
     "dependencies": {
-        "pg": "^8.16.3"
+        "@prisma/client": "6.13.0"
     },
     "devDependencies": {
         "@testcontainers/postgresql": "^11.5.0",
-        "@types/jest": "^30.0.0",
-        "@types/pg": "^8.15.5"
+        "@types/pg": "^8.15.5",
+        "pg": "^8.16.3",
+        "prisma": "^6.13.0"
     }
 }

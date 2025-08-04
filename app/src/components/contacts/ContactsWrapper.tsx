@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@snapp/db';
 import ContactList from './ContactList';
 
 export default async function ContactsWrapper() {

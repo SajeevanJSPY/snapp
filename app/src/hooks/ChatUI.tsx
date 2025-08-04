@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { users as User } from '@/generated/prisma';
+import { User } from '@snapp/db';
 
 const ChatUIContext = createContext<ChatUIContextType | null>(null);
 
