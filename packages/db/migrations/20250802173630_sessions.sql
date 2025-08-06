@@ -1,13 +1,13 @@
 -- migrate:up
-create table Sessions (
-    session_id uuid primary key default gen_random_uuid(),
-    user_id bigint references users,
-    device_id uuid references devices,
-    created_at timestamp default now(),
-    expired_at timestamp generated always as (created_at + interval '5 days') stored
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id BIGINT REFERENCES users,
+    device_id UUID REFERENCES devices,
+    created_at TIMESTAMP DEFAULT now(),
+    expired_at TIMESTAMP GENERATED ALWAYS AS (created_at + interval '5 days') STORED
 );
-create index idx_session_user_id on Sessions(user_id);
+create index idx_session_user_id on sessions(user_id);
 
 -- migrate:down
-drop index if exists idx_session_user_id;
-drop table Sessions;
+DROP INDEX IF EXISTS idx_session_user_id;
+DROP TABLE IF EXISTS sessions;

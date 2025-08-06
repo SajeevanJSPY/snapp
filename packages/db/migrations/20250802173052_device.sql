@@ -1,19 +1,19 @@
 -- migrate:up
-create type device_status as enum ('active', 'inactive', 'blocked');
-create table if not exists Devices (
-    device_id uuid primary key default gen_random_uuid(),
-    user_id bigint references users,
-    user_agent text,
-    ip_address cidr not null,
-    is_trusted boolean default false,
-    created_at timestamp default now(),
-    status device_status not null
+CREATE TYPE device_status AS ENUM ('active', 'inactive', 'blocked');
+CREATE TABLE IF NOT EXISTS devices (
+    device_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id BIGINT REFERENCES users,
+    user_agent TEXT,
+    ip_address CIDR NOT NULL,
+    is_trusted BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT now(),
+    status device_status NOT NULL
 );
-create index idx_devices_user_id on Devices(user_id);
-create index idx_devices_status on Devices(status);
+CREATE INDEX IF NOT EXISTS idx_devices_user_id ON devices(user_id);
+CREATE INDEX IF NOT EXISTS idx_devices_status ON devices(status);
 
 -- migrate:down
-drop index if exists idx_devices_user_id;
-drop index if exists idx_devices_status;
-drop table Devices;
-drop type if exists device_status;
+DROP INDEX IF EXISTS idx_devices_user_id;
+DROP INDEX IF EXISTS idx_devices_status;
+DROP TABLE IF EXISTS devices;
+DROP TYPE IF EXISTS device_status;

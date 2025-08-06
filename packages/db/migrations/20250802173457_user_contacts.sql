@@ -1,14 +1,14 @@
 -- migrate:up
-create table UserContacts (
-    user_contacts_id bigserial primary key,
-    user_id bigint references users,
-    contact_id bigint references users,
-    is_blocked boolean,
-    created_at timestamp default now(),
-    updated_at timestamp default now(),
-    unique (user_id, contact_id),
-    constraint owner_cannot_be_contact check (user_id <> contact_id)
+CREATE TABLE IF NOT EXISTS user_contacts (
+    user_contacts_id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users,
+    contact_id BIGINT REFERENCES users,
+    is_blocked BOOLEAN,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now(),
+    UNIQUE (user_id, contact_id),
+    CONSTRAINT owner_cannot_be_contact CHECK (user_id <> contact_id)
 );
 
 -- migrate:down
-drop table UserContacts;
+DROP TABLE IF EXISTS user_contacts;

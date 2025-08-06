@@ -36,41 +36,78 @@ CREATE TYPE public.device_status AS ENUM (
 
 
 --
+-- Name: add_contact(text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.add_contact(p_username text, p_contact_name text) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    user_id_a BIGINT;
+    user_id_b BIGINT;
+BEGIN
+    SELECT
+        user_id INTO user_id_a
+    FROM
+        users
+    WHERE
+        username = p_username;
+
+    SELECT
+        user_id INTO user_id_b
+    FROM
+        users
+    WHERE
+        username = p_contact_name;
+
+    IF user_id_a iS NULL
+    OR user_id_b IS NULL THEN RETURN FALSE;
+    END IF;
+
+    INSERT INTO
+        user_contacts (user_id, contact_id, is_blocked)
+    VALUES
+        (user_id_a, user_id_b, FALSE);
+    RETURN TRUE;
+END;
+$$;
+
+
+--
 -- Name: contact(text, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.contact(p_username text, p_contact_name text) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
-declare
-    user_id_a bigint;
-    user_id_b bigint;
-begin
-    select
-        user_id into user_id_a
-    from
+DECLARE
+    user_id_a BIGINT;
+    user_id_b BIGINT;
+BEGIN
+    SELECT
+        user_id INTO user_id_a
+    FROM
         users
-    where
+    WHERE
         username = p_username;
 
-    select
+    SELECT
         user_id INTO user_id_b
-    from
+    FROM
         users
-    where
+    WHERE
         username = p_contact_name;
 
-    if user_id_a is null
-    or user_id_b is null then return false;
+    IF user_id_a IS NULL
+    OR user_id_b IS NULL THEN RETURN FALSE;
+    END IF;
 
-    end if;
-
-    insert into
-        UserContacts (user_id, contact_id, is_blocked)
-    values
+    INSERT INTO
+        user_contacts (user_id, contact_id, is_blocked)
+    VALUES
         (user_id_a, user_id_b, FALSE);
-    return true;
-end;
+    RETURN TRUE;
+END;
 $$;
 
 
@@ -81,21 +118,21 @@ $$;
 CREATE FUNCTION public.register_user(p_email character varying, p_username character varying, p_about character varying, p_password text, p_id_address cidr, p_user_agent text, p_device_status public.device_status DEFAULT 'active'::public.device_status) RETURNS TABLE(r_user_id bigint, r_device_id uuid)
     LANGUAGE plpgsql
     AS $$
-declare
-    new_user_id bigint;
-    new_device_id uuid;
-begin
-    insert into
+DECLARE
+    new_user_id BIGINT;
+    new_device_id UUID;
+BEGIN
+    INSERT INTO
         users (email, username, about, password)
-    values
+    VALUES
         (
             p_email,
             p_username,
             p_about,
             crypt(p_password, gen_salt('bf', 12))
-        ) returning user_id into new_user_id;
+        ) RETURNING user_id INTO new_user_id;
 
-    insert into
+    INSERT INTO
         devices (
             user_agent,
             is_trusted,
@@ -103,20 +140,20 @@ begin
             status,
             user_id
         )
-    values
+    VALUES
         (
             p_user_agent,
             TRUE,
             p_id_address,
             p_device_status,
             new_user_id
-        ) returning device_id into new_device_id;
+        ) RETURNING device_id INTO new_device_id;
 
-    return query
-    select
+    RETURN query
+    SELECT
         new_user_id,
         new_device_id;
-end;
+END;
 $$;
 
 
@@ -162,10 +199,10 @@ CREATE TABLE public.sessions (
 
 
 --
--- Name: usercontacts; Type: TABLE; Schema: public; Owner: -
+-- Name: user_contacts; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.usercontacts (
+CREATE TABLE public.user_contacts (
     user_contacts_id bigint NOT NULL,
     user_id bigint,
     contact_id bigint,
@@ -177,10 +214,10 @@ CREATE TABLE public.usercontacts (
 
 
 --
--- Name: usercontacts_user_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: user_contacts_user_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.usercontacts_user_contacts_id_seq
+CREATE SEQUENCE public.user_contacts_user_contacts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -189,10 +226,10 @@ CREATE SEQUENCE public.usercontacts_user_contacts_id_seq
 
 
 --
--- Name: usercontacts_user_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: user_contacts_user_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.usercontacts_user_contacts_id_seq OWNED BY public.usercontacts.user_contacts_id;
+ALTER SEQUENCE public.user_contacts_user_contacts_id_seq OWNED BY public.user_contacts.user_contacts_id;
 
 
 --
@@ -233,10 +270,10 @@ ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
 
 
 --
--- Name: usercontacts user_contacts_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: user_contacts user_contacts_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.usercontacts ALTER COLUMN user_contacts_id SET DEFAULT nextval('public.usercontacts_user_contacts_id_seq'::regclass);
+ALTER TABLE ONLY public.user_contacts ALTER COLUMN user_contacts_id SET DEFAULT nextval('public.user_contacts_user_contacts_id_seq'::regclass);
 
 
 --
@@ -271,19 +308,19 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: usercontacts usercontacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: user_contacts user_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.usercontacts
-    ADD CONSTRAINT usercontacts_pkey PRIMARY KEY (user_contacts_id);
+ALTER TABLE ONLY public.user_contacts
+    ADD CONSTRAINT user_contacts_pkey PRIMARY KEY (user_contacts_id);
 
 
 --
--- Name: usercontacts usercontacts_user_id_contact_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: user_contacts user_contacts_user_id_contact_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.usercontacts
-    ADD CONSTRAINT usercontacts_user_id_contact_id_key UNIQUE (user_id, contact_id);
+ALTER TABLE ONLY public.user_contacts
+    ADD CONSTRAINT user_contacts_user_id_contact_id_key UNIQUE (user_id, contact_id);
 
 
 --
@@ -355,19 +392,19 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: usercontacts usercontacts_contact_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: user_contacts user_contacts_contact_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.usercontacts
-    ADD CONSTRAINT usercontacts_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.user_contacts
+    ADD CONSTRAINT user_contacts_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.users(user_id);
 
 
 --
--- Name: usercontacts usercontacts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: user_contacts user_contacts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.usercontacts
-    ADD CONSTRAINT usercontacts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.user_contacts
+    ADD CONSTRAINT user_contacts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
 
 
 --

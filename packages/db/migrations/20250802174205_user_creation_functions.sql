@@ -1,31 +1,31 @@
 -- migrate:up
-create extension if not exists pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- register user
-create or replace function register_user(
-    p_email varchar,
-    p_username varchar,
-    p_about varchar,
-    p_password text,
-    p_id_address cidr,
-    p_user_agent text,
-    p_device_status device_status default 'active'
-) returns table (r_user_id bigint, r_device_id uuid) AS $$
-declare
-    new_user_id bigint;
-    new_device_id uuid;
-begin
-    insert into
+CREATE OR REPLACE FUNCTION register_user(
+    p_email VARCHAR,
+    p_username VARCHAR,
+    p_about VARCHAR,
+    p_password TEXT,
+    p_id_address CIDR,
+    p_user_agent TEXT,
+    p_device_status device_status DEFAULT 'active'
+) RETURNS TABLE (r_user_id BIGINT, r_device_id UUID) AS $$
+DECLARE
+    new_user_id BIGINT;
+    new_device_id UUID;
+BEGIN
+    INSERT INTO
         users (email, username, about, password)
-    values
+    VALUES
         (
             p_email,
             p_username,
             p_about,
             crypt(p_password, gen_salt('bf', 12))
-        ) returning user_id into new_user_id;
+        ) RETURNING user_id INTO new_user_id;
 
-    insert into
+    INSERT INTO
         devices (
             user_agent,
             is_trusted,
@@ -33,57 +33,56 @@ begin
             status,
             user_id
         )
-    values
+    VALUES
         (
             p_user_agent,
             TRUE,
             p_id_address,
             p_device_status,
             new_user_id
-        ) returning device_id into new_device_id;
+        ) RETURNING device_id INTO new_device_id;
 
-    return query
-    select
+    RETURN query
+    SELECT
         new_user_id,
         new_device_id;
-end;
-$$ language plpgsql;
+END;
+$$ LANGUAGE plpgsql;
 
 
 -- add contacts
-create or replace function contact(p_username text, p_contact_name text) returns boolean as $$
-declare
-    user_id_a bigint;
-    user_id_b bigint;
-begin
-    select
-        user_id into user_id_a
-    from
+CREATE OR REPLACE FUNCTION contact(p_username TEXT, p_contact_name TEXT) RETURNS BOOLEAN AS $$
+DECLARE
+    user_id_a BIGINT;
+    user_id_b BIGINT;
+BEGIN
+    SELECT
+        user_id INTO user_id_a
+    FROM
         users
-    where
+    WHERE
         username = p_username;
 
-    select
+    SELECT
         user_id INTO user_id_b
-    from
+    FROM
         users
-    where
+    WHERE
         username = p_contact_name;
 
-    if user_id_a is null
-    or user_id_b is null then return false;
+    IF user_id_a IS NULL
+    OR user_id_b IS NULL THEN RETURN FALSE;
+    END IF;
 
-    end if;
-
-    insert into
-        UserContacts (user_id, contact_id, is_blocked)
-    values
+    INSERT INTO
+        user_contacts (user_id, contact_id, is_blocked)
+    VALUES
         (user_id_a, user_id_b, FALSE);
-    return true;
-end;
-$$ language plpgsql;
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql;
 
 -- migrate:down
-drop function if exists register_user;
-drop function if exists contact;
-drop extension if exists pgcrypto;
+DROP FUNCTION IF EXISTS register_user;
+DROP FUNCTION IF EXISTS contact;
+DROP EXTENSION IF EXISTS pgcrypto;
