@@ -48,7 +48,7 @@ export async function signup(state: FormState, formData: FormData) {
 
     const { name, email, password } = validatedFields.data;
 
-    console.log('the user has try to signup: ', email)
+    console.log('the user has try to signup: ', email);
 
     // TODO:
     // check the user has already been signed in

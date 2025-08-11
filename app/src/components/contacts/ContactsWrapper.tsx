@@ -1,10 +1,16 @@
 'use server';
 
-import { prisma } from '@snapp/db';
+import { prisma, User } from '@snapp/db';
 import ContactList from './ContactList';
 
 export default async function ContactsWrapper() {
-    const contacts = await prisma.users.findMany();
+    let contacts: User[];
+
+    try {
+        contacts = await prisma.users.findMany();
+    } catch (error) {
+        throw new Error('Internal Error');
+    }
 
     return <ContactList key="contacts-list" contacts={contacts} />;
 }
