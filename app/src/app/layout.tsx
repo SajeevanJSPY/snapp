@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { ChatUIProvider } from '@/hooks/ChatUI';
+import { ChatUIProvider } from '@/context/ChatUIContext';
 
 export const metadata: Metadata = {
     title: 'Snapp',

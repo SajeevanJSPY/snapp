@@ -1,9 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from 'react';
 import { User } from '@snapp/db';
 
-const ChatUIContext = createContext<ChatUIContextType | null>(null);
+export const ChatUIContext = createContext<ChatUIContextType | null>(null);
 
 export const ChatUIProvider = ({ children }: { children: ReactNode }) => {
     const [isChatBox, setIsChatBox] = useState(false);
@@ -14,12 +14,4 @@ export const ChatUIProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </ChatUIContext.Provider>
     );
-};
-
-export const useChatContext = () => {
-    const context = useContext(ChatUIContext);
-    if (!context) {
-        throw new Error('useChatContext must be used within a ChatProvider');
-    }
-    return context;
 };

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { useChatContext } from '@/hooks/ChatUI';
+import { useChatContext } from '@/hooks/useChatContext';
 import { User } from '@snapp/db';
 
 export default function Contact({ contact }: { contact: User }) {

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'motion/react';
 import { useIsMobile } from '@snapp/ui';
-import { useChatContext } from '@/hooks/ChatUI';
+import { useChatContext } from '@/hooks/useChatContext';
 import Chat from '@/components/chatbox/Chat';
 import { ReactNode } from 'react';
 
