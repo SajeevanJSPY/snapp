@@ -1,6 +1,6 @@
 'use client';
 
-import { useChatContext } from '@/hooks/useChatContext';
+import { useChatContext } from '@/context/ChatPanelContext';
 import { MessageCircle, Users2 } from 'lucide-react';
 import { ReactNode, Suspense } from 'react';
 import Search from './Search';

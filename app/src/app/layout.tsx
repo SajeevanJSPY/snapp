@@ -1,18 +1,21 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { ChatUIProvider } from '@/context/ChatUIContext';
+import { AppProviders } from '@/context/AppProvider';
+import { getUser } from '@/lib/auth';
 
 export const metadata: Metadata = {
     title: 'Snapp',
     description: 'realtime chat application',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const currentUser = await getUser();
+
     return (
         <html lang="en" data-theme="lofi">
             <head>
@@ -31,7 +34,7 @@ export default function RootLayout({
             </head>
 
             <body className="h-screen max-w-screen">
-                <ChatUIProvider>{children}</ChatUIProvider>
+                <AppProviders currentUser={currentUser}>{children}</AppProviders>
             </body>
         </html>
     );

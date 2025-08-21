@@ -1,6 +1,6 @@
 'use client';
 
-import { useChatContext } from '@/hooks/useChatContext';
+import { useChatContext } from '@/context/ChatPanelContext';
 import ResponsiveButton from '../common/Button';
 import Image from 'next/image';
 import { ChevronLeft } from 'lucide-react';

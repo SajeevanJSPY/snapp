@@ -1,4 +1,4 @@
-import { useChatContext } from '@/hooks/useChatContext';
+import { useChatContext } from '@/context/ChatPanelContext';
 import ChatBox from './ChatBox';
 import ChatHeader from './Header';
 import ChatInput from './Input';
