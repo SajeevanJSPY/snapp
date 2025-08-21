@@ -2,6 +2,7 @@ import { PrismaClient } from './generated/prisma';
 
 export const prisma = new PrismaClient();
 export * from './generated/prisma';
+export * from './prisma';
 
 // export the types as PascalNames
 export type {
