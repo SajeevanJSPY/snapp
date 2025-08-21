@@ -6,7 +6,7 @@ import { User } from '@snapp/db';
 export default function ContactList({ contacts }: { contacts: User[] }) {
     return (
         <>
-            <ul className="space-y-3">
+            <ul className="space-y-3 p-2">
                 {contacts &&
                     contacts.map(contact => <Contact key={contact.email} contact={contact} />)}
             </ul>

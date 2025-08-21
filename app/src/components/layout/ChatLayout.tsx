@@ -38,7 +38,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
     };
 
     return (
-        <main className="h-screen overflow-hidden block md:grid md:grid-cols-5">
+        <main className="h-screen overflow-hidden block md:grid md:grid-cols-10">
             {/* for mobile screens */}
             {isMobile ? (
                 <>
@@ -80,10 +80,10 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
                 </>
             ) : (
                 <>
-                    <section className="md:col-span-2 w-full h-full overflow-y-auto">
+                    <section className="md:col-span-4 w-full h-full overflow-y-auto">
                         {children}
                     </section>
-                    <section className="md:col-span-3 h-full overflow-y-auto">
+                    <section className="md:col-span-6 h-full overflow-y-auto">
                         <Chat />
                     </section>
                 </>

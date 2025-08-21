@@ -2,7 +2,7 @@
 
 export default function ContactsSearchBar() {
     return (
-        <div className="mb-4">
+        <div className="m-4">
             <input
                 type="text"
                 placeholder="Search contacts"
