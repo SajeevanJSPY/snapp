@@ -13,8 +13,5 @@ function getMigration(filename: string): string {
     return match[1].trim();
 }
 
-const sessionsFilepath = '20250802173630_sessions.sql';
-export const sessionsTableDDL = getMigration(sessionsFilepath);
-
-const usersFilepath = '20250802171002_users.sql';
-export const usersTableDDL = getMigration(usersFilepath);
+const usersFilename = '20250802171002_users.sql';
+export const usersTableDDL = getMigration(usersFilename);
