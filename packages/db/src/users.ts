@@ -1,4 +1,4 @@
-import { QueryResultRow, QueryResult } from 'pg';
+import { QueryResultRow } from 'pg';
 import { query } from './client';
 
 export interface User extends QueryResultRow {
@@ -10,7 +10,6 @@ export interface User extends QueryResultRow {
     avatar: Buffer | null;
     last_login: Date;
 }
-export type UserResult = QueryResult<User>;
 
 export async function addUser(
     email: string,
@@ -19,16 +18,18 @@ export async function addUser(
     password: string,
     avatar?: string
 ): Promise<User> {
-    const results = await query<User>(
+    const result = await query<User>(
         `INSERT INTO public.users (email, username, about, password, avatar)
         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         [email, username, about, password, avatar]
     );
 
-    return results.rows[0];
+    if (!result.rows[0]) throw new Error('failed to insert user');
+    return result.rows[0];
 }
 
-export async function findUserByEmail(email: string) {
-    const { rows } = await query<UserResult>(`SELECT * FROM users WHERE email = $1`, [email]);
-    return rows[0] ?? null;
+export async function findUserByEmail(email: string): Promise<User> {
+    const result = await query<User>(`SELECT * FROM users WHERE email = $1`, [email]);
+    if (!result.rows[0]) throw new Error('User not found');
+    return result.rows[0];
 }
