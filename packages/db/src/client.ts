@@ -6,6 +6,11 @@ export function initPool(pool: Pool) {
     currentPool = pool;
 }
 
+export async function removePool(pool: Pool) {
+    currentPool = null;
+    await pool.end();
+}
+
 export function getPool(): Pool {
     if (!currentPool) throw new Error('DB pool not initialized');
     return currentPool;

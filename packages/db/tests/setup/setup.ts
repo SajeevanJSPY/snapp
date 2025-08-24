@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { beforeAll, afterAll } from 'vitest';
+import { initPool, removePool } from '../../src/client';
 
 const postgresqlDockerImage = 'postgres:17.5';
 
@@ -17,9 +18,10 @@ beforeAll(async () => {
     pool = new Pool({
         connectionString: container.getConnectionUri(),
     });
+    initPool(pool);
 });
 
 afterAll(async () => {
-    await pool.end();
+    await removePool(pool);
     await container.stop();
 });
