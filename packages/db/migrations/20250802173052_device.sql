@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS devices (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(user_id),
-    device_id UUID NOT NULL DEFAULT gen_random_uuid(),
+    device_id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
     user_agent VARCHAR(30),
     refresh_token TEXT,
     last_login_at TIMESTAMP DEFAULT now(),

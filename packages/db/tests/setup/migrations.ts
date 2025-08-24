@@ -21,3 +21,6 @@ export const devicesTableDDL = getMigration(devicesFilename);
 
 const deviceLimitTriggerFilename = '20250823153503_add_device_limit_trigger.sql';
 export const deviceLimitTriggerFunction = getMigration(deviceLimitTriggerFilename);
+
+const sessionsFilename = '20250802173630_sessions.sql';
+export const sessionsTableDDL = getMigration(sessionsFilename);
