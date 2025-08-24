@@ -15,3 +15,9 @@ function getMigration(filename: string): string {
 
 const usersFilename = '20250802171002_users.sql';
 export const usersTableDDL = getMigration(usersFilename);
+
+const devicesFilename = '20250802173052_device.sql';
+export const devicesTableDDL = getMigration(devicesFilename);
+
+const deviceLimitTriggerFilename = '20250823153503_add_device_limit_trigger.sql';
+export const deviceLimitTriggerFunction = getMigration(deviceLimitTriggerFilename);
