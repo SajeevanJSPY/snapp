@@ -1,4 +1,5 @@
 import { QueryResultRow } from 'pg';
+
 import { query } from './client';
 
 export interface UserConnection extends QueryResultRow {
@@ -29,7 +30,7 @@ export class UserConnection {
         connectionId: number
     ): Promise<UserConnectionRequest> {
         const request = await query<UserConnectionRequest>(
-            `INSERT INTO ${this.requestTableS}(request_from_id, request_to_id) VALUES ($1, $2) RETURNING *`,
+            `INSERT INTO ${this.requestTableS} (request_from_id, request_to_id) VALUES ($1, $2) RETURNING *`,
             [userId, connectionId]
         );
 

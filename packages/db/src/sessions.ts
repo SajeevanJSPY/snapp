@@ -1,6 +1,6 @@
 import { QueryResultRow } from 'pg';
 import { query } from './client';
-import { findUserByEmail } from './users';
+import { User } from '.';
 
 export interface Session extends QueryResultRow {
     session_id: string;
@@ -10,25 +10,31 @@ export interface Session extends QueryResultRow {
     created_at: Date;
 }
 
-export async function createSession(userId: number, deviceId?: string): Promise<Session> {
-    const session = await query<Session>(
-        `INSERT INTO public.sessions(user_id, current_device_id) VALUES ($1, $2) RETURNING *`,
-        [userId, deviceId]
-    );
+export class Session {
+    private static readonly schema = 'public';
+    private static readonly sessionTable = 'sessions';
+    private static readonly sessionTableS = this.schema + '.' + this.sessionTable;
 
-    return session.rows[0];
-}
+    static async create(userId: number, deviceId?: string): Promise<Session> {
+        const session = await query<Session>(
+            `INSERT INTO ${this.sessionTableS} (user_id, current_device_id) VALUES ($1, $2) RETURNING *`,
+            [userId, deviceId]
+        );
+        return session.rows[0];
+    }
 
-export async function currentSession(userEmail: string): Promise<Session> {
-    const user = await findUserByEmail(userEmail);
-    const result = await query<Session>(`SELECT * FROM sessions WHERE user_id = $1`, [
-        user.user_id,
-    ]);
-    if (!result.rows[0]) throw new Error('Session not found');
+    static async getCurrent(userEmail: string): Promise<Session> {
+        const user = await User.findByEmail(userEmail);
+        const result = await query<Session>(
+            `SELECT * FROM ${this.sessionTableS} WHERE user_id = $1`,
+            [user.user_id]
+        );
 
-    return result.rows[0];
-}
+        if (!result.rows[0]) throw new Error('Session not found');
+        return result.rows[0];
+    }
 
-export async function switchCurrentSession(userId: number, deviceId: string) {
-    await query(`SELECT switch_active_device($1, $2)`, [userId, deviceId]);
+    static async switch(userId: number, deviceId: string) {
+        await query(`SELECT switch_active_device($1, $2)`, [userId, deviceId]);
+    }
 }

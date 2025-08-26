@@ -1,7 +1,8 @@
 import { beforeEach, assert, beforeAll, suite, test, expect } from 'vitest';
+
 import { pool, usersTableDDL } from './setup';
 import { userFixtures } from './fixtures';
-import { addUser } from '../src/users';
+import { User } from '..';
 
 const eren = userFixtures.eren.user;
 
@@ -15,7 +16,7 @@ suite('users table', () => {
     });
 
     test('should insert a valid user', async () => {
-        const res = await addUser(
+        const user = await User.create(
             eren.email,
             eren.username,
             eren.about,
@@ -23,15 +24,15 @@ suite('users table', () => {
             eren.avatar
         );
 
-        assert.equal(res.email, eren.email);
-        assert.equal(res.username, eren.username);
-        assert.equal(res.about, eren.about);
+        assert.equal(user.email, eren.email);
+        assert.equal(user.username, eren.username);
+        assert.equal(user.about, eren.about);
     });
 
     test('should reject duplicate emails', async () => {
-        await addUser(eren.email, eren.username, eren.about, eren.password);
+        await User.create(eren.email, eren.username, eren.about, eren.password);
         await expect(
-            addUser(eren.email, eren.username, eren.about, eren.password)
+            User.create(eren.email, eren.username, eren.about, eren.password)
         ).rejects.toThrowError(/duplicate key value/);
     });
 
@@ -41,14 +42,14 @@ suite('users table', () => {
         eren.username = `erenerenerenerenereneren`;
 
         await expect(
-            addUser(eren.email, eren.username, eren.about, eren.password)
+            User.create(eren.email, eren.username, eren.about, eren.password)
         ).rejects.toThrowError(/value too long/);
 
         // if the excess characters are space, they shouldn't cause error
         eren.username = `erenerenerenereneren`;
         // excess characters
         eren.username += `  `;
-        const res = await addUser(eren.email, eren.username, eren.about, eren.password);
+        const res = await User.create(eren.email, eren.username, eren.about, eren.password);
 
         assert.notEqual(res.username.length, eren.username.length);
     });

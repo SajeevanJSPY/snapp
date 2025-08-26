@@ -11,25 +11,33 @@ export interface User extends QueryResultRow {
     last_login: Date;
 }
 
-export async function addUser(
-    email: string,
-    username: string,
-    about: string,
-    password: string,
-    avatar?: string
-): Promise<User> {
-    const result = await query<User>(
-        `INSERT INTO public.users (email, username, about, password, avatar)
-        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [email, username, about, password, avatar]
-    );
+export class User {
+    private static readonly schema = 'public';
+    private static readonly userTable = 'users';
+    private static readonly userTableS = this.schema + '.' + this.userTable;
 
-    if (!result.rows[0]) throw new Error('failed to insert user');
-    return result.rows[0];
-}
+    static async create(
+        email: string,
+        username: string,
+        about: string,
+        password: string,
+        avatar?: string
+    ): Promise<User> {
+        const result = await query<User>(
+            `INSERT INTO ${this.userTableS} (email, username, about, password, avatar)
+            VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [email, username, about, password, avatar]
+        );
 
-export async function findUserByEmail(email: string): Promise<User> {
-    const result = await query<User>(`SELECT * FROM users WHERE email = $1`, [email]);
-    if (!result.rows[0]) throw new Error('User not found');
-    return result.rows[0];
+        if (!result.rows[0]) throw new Error('failed to insert user');
+        return result.rows[0];
+    }
+
+    static async findByEmail(email: string): Promise<User> {
+        const result = await query<User>(`SELECT * FROM ${this.userTableS} WHERE email = $1`, [
+            email,
+        ]);
+        if (!result.rows[0]) throw new Error('User not found');
+        return result.rows[0];
+    }
 }

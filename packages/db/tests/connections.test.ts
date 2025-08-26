@@ -2,8 +2,7 @@ import { beforeEach, assert, beforeAll, suite, test, expect } from 'vitest';
 
 import { pool, usersTableDDL, userConnectionsTableDDL } from './setup';
 import { userFixtures } from './fixtures';
-import { User, addUser } from '../src/users';
-import { UserConnection } from '../src/connections';
+import { User, UserConnection } from '..';
 
 const eren = userFixtures.eren.user;
 const mikasa = userFixtures.mikasa.user;
@@ -14,8 +13,8 @@ let user2: User;
 beforeAll(async () => {
     await pool.query(usersTableDDL);
     await pool.query(userConnectionsTableDDL);
-    user1 = await addUser(eren.email, eren.username, eren.about, eren.password);
-    user2 = await addUser(mikasa.email, mikasa.username, mikasa.about, mikasa.password);
+    user1 = await User.create(eren.email, eren.username, eren.about, eren.password);
+    user2 = await User.create(mikasa.email, mikasa.username, mikasa.about, mikasa.password);
 });
 
 beforeEach(async () => {

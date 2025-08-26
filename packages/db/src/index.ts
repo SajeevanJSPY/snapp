@@ -7,8 +7,13 @@ export * from './prisma';
 // export the types as PascalNames
 export type {
     usercontacts as UserContacts,
-    users as User,
+    users as User1,
     devices as Devices,
-    sessions as Session,
+    sessions as Session1,
     device_status as DeviceStatus,
 } from './generated/prisma';
+
+export { User } from './users';
+export { Device } from './devices';
+export { Session } from './sessions';
+export { UserConnection } from './connections';

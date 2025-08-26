@@ -1,8 +1,8 @@
 import { beforeEach, assert, beforeAll, suite, test, expect } from 'vitest';
+
 import { pool, usersTableDDL, devicesTableDDL, deviceLimitTriggerFunction } from './setup';
 import { userFixtures } from './fixtures';
-import { User, addUser } from '../src/users';
-import { addDeviceToUser, retrieveAllDevicesFromUser } from '../src/devices';
+import { Device, User } from '..';
 
 const eren = userFixtures.eren.user;
 const device1 = userFixtures.eren.devices[0];
@@ -15,7 +15,7 @@ suite('devices table', () => {
         await pool.query(usersTableDDL);
         await pool.query(devicesTableDDL);
         await pool.query(deviceLimitTriggerFunction);
-        user = await addUser(eren.email, eren.username, eren.about, eren.password);
+        user = await User.create(eren.email, eren.username, eren.about, eren.password);
     });
 
     beforeEach(async () => {
@@ -23,16 +23,16 @@ suite('devices table', () => {
     });
 
     test('should insert a valid device', async () => {
-        let device = await addDeviceToUser(user.email, device1.userAgent, device1.refreshToken);
+        let device = await Device.create(user.email, device1.userAgent, device1.refreshToken);
         assert.isDefined(device);
-        await addDeviceToUser(user.email, device1.userAgent, device1.refreshToken);
+        await Device.create(user.email, device1.userAgent, device1.refreshToken);
     });
 
     test('retrieve device informations from the user', async () => {
-        await addDeviceToUser(user.email, device1.userAgent, device1.refreshToken);
-        await addDeviceToUser(user.email, device2.userAgent, device2.refreshToken);
+        await Device.create(user.email, device1.userAgent, device1.refreshToken);
+        await Device.create(user.email, device2.userAgent, device2.refreshToken);
 
-        let result = await retrieveAllDevicesFromUser(user.email);
+        let result = await Device.getAll(user.email);
         assert.equal(result.length, 2, 'failed to retrieve all device informations from the user');
         assert.equal(result[0].user_agent, device1.userAgent);
         assert.equal(result[0].refresh_token, device1.refreshToken);
@@ -41,11 +41,11 @@ suite('devices table', () => {
     });
 
     test('device limit trigger', async () => {
-        await addDeviceToUser(user.email, device1.userAgent, device1.refreshToken);
-        await addDeviceToUser(user.email, device2.userAgent, device2.refreshToken);
+        await Device.create(user.email, device1.userAgent, device1.refreshToken);
+        await Device.create(user.email, device2.userAgent, device2.refreshToken);
 
         await expect(
-            addDeviceToUser(user.email, device2.userAgent, device2.refreshToken)
+            Device.create(user.email, device2.userAgent, device2.refreshToken)
         ).rejects.toThrowError(/Device limit has been reached/);
     });
 });
