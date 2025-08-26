@@ -17,23 +17,8 @@ export default async function RootLayout({
     const currentUser = await getUser();
 
     return (
-        <html lang="en" data-theme="lofi">
-            <head>
-                <link
-                    href="https://cdn.jsdelivr.net/npm/daisyui@5"
-                    rel="stylesheet"
-                    type="text/css"
-                />
-                {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-                <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-                <link
-                    href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
-                    rel="stylesheet"
-                    type="text/css"
-                />
-            </head>
-
-            <body className="h-screen max-w-screen">
+        <html lang="en" data-theme="light">
+            <body className="h-screen max-w-screen bg-base-100 text-base-content">
                 <AppProviders currentUser={currentUser}>{children}</AppProviders>
             </body>
         </html>

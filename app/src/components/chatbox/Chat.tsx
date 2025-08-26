@@ -10,13 +10,13 @@ export default function Chat() {
     return (
         <>
             {selectedUser ? (
-                <div className="h-full flex flex-col bg-gradient-to-r from-[var(--color-info)] to-[var(--color-success)]">
+                <div className="h-full flex flex-col">
                     <ChatHeader />
                     <ChatBox />
                     <ChatInput />
                 </div>
             ) : (
-                <div className="h-full flex justify-center items-center bg-gradient-to-r from-[var(--color-info)] to-[var(--color-success)]">
+                <div className="h-full flex justify-center items-center">
                     <MessageCircle />
                 </div>
             )}

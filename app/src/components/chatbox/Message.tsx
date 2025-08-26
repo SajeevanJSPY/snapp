@@ -2,13 +2,13 @@ export default function ChatBoxMessage({ content, mine }: { content: string; min
     return (
         <>
             {mine ? (
-                <div className="bg-white text-gray-600 rounded-xl p-2 max-w-[70%] self-end shadow">
+                <li className="self-end max-w-[70%] bg-primary text-primary-content p-2 rounded-xl shadow">
                     {content}
-                </div>
+                </li>
             ) : (
-                <div className="bg-purple-100 text-purple-600 rounded-xl p-2 max-w-[70%]">
+                <li className="bg-secondary max-w-[70%] text-secondary-content rounded-xl p-2">
                     {content}
-                </div>
+                </li>
             )}
         </>
     );

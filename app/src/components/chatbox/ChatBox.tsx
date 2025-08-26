@@ -2,8 +2,8 @@ import ChatMessage from './Message';
 
 export default function ChatBox() {
     return (
-        <div className="w-full h-full flex-1 overflow-y-auto">
-            <div className="h-full p-2 flex flex-col space-y-1 text-[0.75rem] overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
+            <ul className="flex flex-col space-y-1 h-full p-3 text-[0.75rem] overflow-y-auto">
                 <ChatMessage content="That sounds great. I'd be happy with that." mine={false} />
                 <ChatMessage
                     content="Could you send over some pictures of your dog, please?"
@@ -36,7 +36,7 @@ export default function ChatBox() {
                     content="She looks so happy! The time we discussed works. How long shall I take her out for?"
                     mine={false}
                 />
-            </div>
+            </ul>
         </div>
     );
 }

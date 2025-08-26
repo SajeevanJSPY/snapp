@@ -1,5 +1,5 @@
 import { User } from '@snapp/db';
-import { MessageCircle, Settings, UserPen } from 'lucide-react';
+import { Settings, UserPen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function Sidebar({ currentUser }: { currentUser: User | null }) {
@@ -12,7 +12,7 @@ export default function Sidebar({ currentUser }: { currentUser: User | null }) {
 
     return (
         <>
-            <div className="md:col-span-1 md:flex md:flex-col hidden gap-6 py-6 bg-blue-600">
+            <div className="w-[60px] shrink-0 flex flex-col gap-6 py-6 bg-base-200">
                 <div
                     className="cursor-pointer flex items-center justify-center"
                     onClick={() => setOpen(true)}
