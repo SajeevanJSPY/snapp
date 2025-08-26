@@ -112,6 +112,22 @@ $$;
 
 
 --
+-- Name: enforce_device_limit(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.enforce_device_limit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF (SELECT count(*) FROM devices WHERE user_id = NEW.user_id) >= 2 THEN
+        RAISE EXCEPTION 'Device limit has been reached';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+
+--
 -- Name: register_user(character varying, character varying, character varying, text, cidr, text, public.device_status); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -157,6 +173,33 @@ END;
 $$;
 
 
+--
+-- Name: switch_active_device(integer, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.switch_active_device(p_user_id integer, p_device_id uuid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM devices WHERE device_id = p_device_id AND user_id = p_user_id
+    ) THEN
+        RAISE EXCEPTION 'Device % does not exist for user %', p_device_id, p_user_id;
+    END IF;
+
+    -- clear current device
+    UPDATE public.sessions
+    SET current_device_id = NULL
+    WHERE user_id = p_user_id;
+
+    -- set new device
+    UPDATE public.sessions
+    SET current_device_id = p_device_id
+    WHERE user_id = p_user_id;
+END;
+$$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -166,14 +209,34 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.devices (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
     device_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    user_id bigint,
-    user_agent text,
-    ip_address cidr NOT NULL,
-    is_trusted boolean DEFAULT false,
-    created_at timestamp without time zone DEFAULT now(),
-    status public.device_status NOT NULL
+    user_agent character varying(30),
+    refresh_token text,
+    last_login_at timestamp without time zone DEFAULT now(),
+    last_updated_at timestamp without time zone DEFAULT now()
 );
+
+
+--
+-- Name: devices_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.devices_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: devices_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.devices_id_seq OWNED BY public.devices.id;
 
 
 --
@@ -191,33 +254,33 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.sessions (
     session_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    user_id bigint,
-    device_id uuid,
-    created_at timestamp without time zone DEFAULT now(),
-    expired_at timestamp without time zone GENERATED ALWAYS AS ((created_at + '5 days'::interval)) STORED
+    user_id integer NOT NULL,
+    current_device_id uuid,
+    last_updated timestamp without time zone DEFAULT now() NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- Name: user_contacts; Type: TABLE; Schema: public; Owner: -
+-- Name: user_connection_requests; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.user_contacts (
-    user_contacts_id bigint NOT NULL,
-    user_id bigint,
-    contact_id bigint,
-    is_blocked boolean,
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone DEFAULT now(),
-    CONSTRAINT owner_cannot_be_contact CHECK ((user_id <> contact_id))
+CREATE TABLE public.user_connection_requests (
+    request_id integer NOT NULL,
+    request_from_id integer NOT NULL,
+    request_to_id integer NOT NULL,
+    is_accepted boolean DEFAULT false NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    CONSTRAINT user_cannot_be_contact CHECK ((request_from_id <> request_to_id))
 );
 
 
 --
--- Name: user_contacts_user_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: user_connection_requests_request_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.user_contacts_user_contacts_id_seq
+CREATE SEQUENCE public.user_connection_requests_request_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -226,10 +289,24 @@ CREATE SEQUENCE public.user_contacts_user_contacts_id_seq
 
 
 --
--- Name: user_contacts_user_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: user_connection_requests_request_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.user_contacts_user_contacts_id_seq OWNED BY public.user_contacts.user_contacts_id;
+ALTER SEQUENCE public.user_connection_requests_request_id_seq OWNED BY public.user_connection_requests.request_id;
+
+
+--
+-- Name: user_connections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_connections (
+    user_id integer NOT NULL,
+    contact_id integer NOT NULL,
+    is_blocked boolean DEFAULT false NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    CONSTRAINT user_cannot_be_contact CHECK ((user_id <> contact_id))
+);
 
 
 --
@@ -237,16 +314,15 @@ ALTER SEQUENCE public.user_contacts_user_contacts_id_seq OWNED BY public.user_co
 --
 
 CREATE TABLE public.users (
-    user_id bigint NOT NULL,
+    user_id integer NOT NULL,
     email character varying(30) NOT NULL,
     username character varying(20) NOT NULL,
     about character varying(100),
     password text NOT NULL,
     avatar bytea,
     last_login timestamp without time zone DEFAULT now() NOT NULL,
-    is_active boolean DEFAULT true,
-    CONSTRAINT email_empty_check CHECK (((email)::text <> ''::text)),
-    CONSTRAINT username_empty_check CHECK (((username)::text <> ''::text))
+    CONSTRAINT email_length_check CHECK ((char_length(TRIM(BOTH FROM email)) > 5)),
+    CONSTRAINT username_length_check CHECK ((char_length(TRIM(BOTH FROM username)) > 3))
 );
 
 
@@ -255,6 +331,7 @@ CREATE TABLE public.users (
 --
 
 CREATE SEQUENCE public.users_user_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -270,10 +347,17 @@ ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
 
 
 --
--- Name: user_contacts user_contacts_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: devices id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_contacts ALTER COLUMN user_contacts_id SET DEFAULT nextval('public.user_contacts_user_contacts_id_seq'::regclass);
+ALTER TABLE ONLY public.devices ALTER COLUMN id SET DEFAULT nextval('public.devices_id_seq'::regclass);
+
+
+--
+-- Name: user_connection_requests request_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_connection_requests ALTER COLUMN request_id SET DEFAULT nextval('public.user_connection_requests_request_id_seq'::regclass);
 
 
 --
@@ -284,11 +368,27 @@ ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.u
 
 
 --
+-- Name: devices devices_device_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.devices
+    ADD CONSTRAINT devices_device_id_key UNIQUE (device_id);
+
+
+--
 -- Name: devices devices_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.devices
-    ADD CONSTRAINT devices_pkey PRIMARY KEY (device_id);
+    ADD CONSTRAINT devices_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: devices devices_user_id_device_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.devices
+    ADD CONSTRAINT devices_user_id_device_id_key UNIQUE (user_id, device_id);
 
 
 --
@@ -308,19 +408,27 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: user_contacts user_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: user_connection_requests user_connection_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_contacts
-    ADD CONSTRAINT user_contacts_pkey PRIMARY KEY (user_contacts_id);
+ALTER TABLE ONLY public.user_connection_requests
+    ADD CONSTRAINT user_connection_requests_pkey PRIMARY KEY (request_id);
 
 
 --
--- Name: user_contacts user_contacts_user_id_contact_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: user_connection_requests user_connection_requests_request_from_id_request_to_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_contacts
-    ADD CONSTRAINT user_contacts_user_id_contact_id_key UNIQUE (user_id, contact_id);
+ALTER TABLE ONLY public.user_connection_requests
+    ADD CONSTRAINT user_connection_requests_request_from_id_request_to_id_key UNIQUE (request_from_id, request_to_id);
+
+
+--
+-- Name: user_connections user_connections_user_id_contact_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_connections
+    ADD CONSTRAINT user_connections_user_id_contact_id_key UNIQUE (user_id, contact_id);
 
 
 --
@@ -340,13 +448,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: idx_devices_status; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_devices_status ON public.devices USING btree (status);
-
-
---
 -- Name: idx_devices_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -361,10 +462,24 @@ CREATE INDEX idx_session_user_id ON public.sessions USING btree (user_id);
 
 
 --
+-- Name: idx_sessions_current_device; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_sessions_current_device ON public.sessions USING btree (current_device_id);
+
+
+--
 -- Name: idx_user_email; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_user_email ON public.users USING btree (email);
+
+
+--
+-- Name: devices device_limit_trigger; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER device_limit_trigger BEFORE INSERT ON public.devices FOR EACH ROW EXECUTE FUNCTION public.enforce_device_limit();
 
 
 --
@@ -376,11 +491,11 @@ ALTER TABLE ONLY public.devices
 
 
 --
--- Name: sessions sessions_device_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sessions sessions_current_device_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_device_id_fkey FOREIGN KEY (device_id) REFERENCES public.devices(device_id);
+    ADD CONSTRAINT sessions_current_device_id_fkey FOREIGN KEY (current_device_id) REFERENCES public.devices(device_id);
 
 
 --
@@ -392,19 +507,35 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- Name: user_contacts user_contacts_contact_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: user_connection_requests user_connection_requests_request_from_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_contacts
-    ADD CONSTRAINT user_contacts_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.user_connection_requests
+    ADD CONSTRAINT user_connection_requests_request_from_id_fkey FOREIGN KEY (request_from_id) REFERENCES public.users(user_id);
 
 
 --
--- Name: user_contacts user_contacts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: user_connection_requests user_connection_requests_request_to_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.user_contacts
-    ADD CONSTRAINT user_contacts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
+ALTER TABLE ONLY public.user_connection_requests
+    ADD CONSTRAINT user_connection_requests_request_to_id_fkey FOREIGN KEY (request_to_id) REFERENCES public.users(user_id);
+
+
+--
+-- Name: user_connections user_connections_contact_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_connections
+    ADD CONSTRAINT user_connections_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.users(user_id);
+
+
+--
+-- Name: user_connections user_connections_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_connections
+    ADD CONSTRAINT user_connections_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id);
 
 
 --
@@ -421,4 +552,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250802173052'),
     ('20250802173457'),
     ('20250802173630'),
-    ('20250802174205');
+    ('20250802174205'),
+    ('20250823153503');

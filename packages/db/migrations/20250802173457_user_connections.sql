@@ -20,4 +20,4 @@ CREATE TABLE IF NOT EXISTS public.user_connection_requests (
 
 -- migrate:down
 DROP TABLE IF EXISTS user_connection_requests;
-DROP TABLE IF EXISTS user_contacts;
+DROP TABLE IF EXISTS user_connections;
