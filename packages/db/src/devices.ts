@@ -1,7 +1,6 @@
 import { QueryResultRow } from 'pg';
 
 import { query } from './client';
-import { User } from '.';
 
 export interface Device extends QueryResultRow {
     id: number;
@@ -19,23 +18,22 @@ export class Device {
     private static readonly deviceTableS = this.schema + '.' + this.deviceTable;
 
     static async create(
-        userEmail: string,
+        userId: number,
         userAgent?: string,
         refreshToken?: string
     ): Promise<Device> {
-        const user = await User.findByEmail(userEmail);
         const device = await query<Device>(
             `INSERT INTO ${this.deviceTableS} (user_id, user_agent, refresh_token) VALUES ($1, $2, $3) RETURNING *`,
-            [user.user_id, userAgent, refreshToken]
+            [userId, userAgent, refreshToken]
         );
         return device.rows[0];
     }
 
-    static async getAll(userEmail: string): Promise<Device[]> {
-        const user = await User.findByEmail(userEmail);
-        const devices = await query<Device>(`SELECT * FROM ${this.deviceTableS} WHERE user_id = $1`, [
-            user.user_id,
-        ]);
+    static async getAll(userId: number): Promise<Device[]> {
+        const devices = await query<Device>(
+            `SELECT * FROM ${this.deviceTableS} WHERE user_id = $1`,
+            [userId]
+        );
 
         if (devices.rowCount == 0) throw new Error('no device were found');
         return devices.rows;
