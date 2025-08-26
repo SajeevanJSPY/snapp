@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SignupFormSchema, FormState, SignInSchema, SignInState } from '@/lib/definitions';
 import { createSession, decrypt } from '@/lib/sessions';
-import { prisma } from '@snapp/db';
+import { User } from '@snapp/db';
 
 export async function signin(state: SignInState, formData: FormData) {
     const validatedFields = SignInSchema.safeParse({
@@ -21,7 +21,7 @@ export async function signin(state: SignInState, formData: FormData) {
     // TODO: validate the password
     const { email, password } = validatedFields.data;
 
-    const user = await prisma.users.findUnique({ where: { email: email } });
+    const user = await User.findByEmail(email);
     if (!user) {
         console.log('users are not in the database');
         return;

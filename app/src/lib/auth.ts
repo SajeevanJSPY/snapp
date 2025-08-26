@@ -1,5 +1,5 @@
 import { COOKIE_JWT_KEY, decrypt } from '@/lib/sessions';
-import { getCurrentUserInfo, User } from '@snapp/db';
+import { User } from '@snapp/db';
 
 import { cookies } from 'next/headers';
 
@@ -8,7 +8,7 @@ export async function getUser(): Promise<User | null> {
     const session = await decrypt(cookie)!;
 
     const email = String(session?.userId!);
-    const userInfo = await getCurrentUserInfo(email);
+    const userInfo = await User.findByEmail(email);
 
     return userInfo;
 }
