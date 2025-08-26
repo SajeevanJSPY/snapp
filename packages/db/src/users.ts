@@ -7,7 +7,7 @@ export interface User extends QueryResultRow {
     username: string;
     about: string | null;
     password: string;
-    avatar: Buffer | null;
+    avatar: string | null;
     last_login: Date;
 }
 
@@ -30,7 +30,12 @@ export class User {
         );
 
         if (!result.rows[0]) throw new Error('failed to insert user');
-        return result.rows[0];
+
+        let user = result.rows[0];
+        if (user.avatar) {
+            user.avatar = Buffer.from(user.avatar).toString('base64');
+        }
+        return user;
     }
 
     static async findByEmail(email: string): Promise<User> {
@@ -38,6 +43,11 @@ export class User {
             email,
         ]);
         if (!result.rows[0]) throw new Error('User not found');
-        return result.rows[0];
+
+        let user = result.rows[0];
+        if (user.avatar) {
+            user.avatar = Buffer.from(user.avatar).toString();
+        }
+        return user;
     }
 }
