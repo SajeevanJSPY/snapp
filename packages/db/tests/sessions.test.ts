@@ -1,11 +1,11 @@
 import { beforeEach, assert, beforeAll, suite, test } from 'vitest';
 
 import { devicesTableDDL, pool, sessionsTableDDL, usersTableDDL } from './setup';
-import { userFixtures } from './fixtures';
+import { fixtures } from './fixtures';
 import { User, Device, Session } from '..';
 
-const eren = userFixtures.eren.user;
-const devices = userFixtures.eren.devices;
+const eren = fixtures.eren.user;
+const devices = fixtures.eren.devices;
 
 suite('sessions table', async () => {
     let user: User;
@@ -17,8 +17,8 @@ suite('sessions table', async () => {
         await pool.query(devicesTableDDL);
         await pool.query(sessionsTableDDL);
         user = await User.create(eren.email, eren.username, eren.about, eren.password);
-        device1 = await Device.create(user.email, devices[0].userAgent, devices[0].refreshToken);
-        device2 = await Device.create(user.email, devices[1].userAgent, devices[1].refreshToken);
+        device1 = await Device.create(user.user_id, devices[0].userAgent, devices[0].refreshToken);
+        device2 = await Device.create(user.user_id, devices[1].userAgent, devices[1].refreshToken);
     });
 
     beforeEach(async () => {

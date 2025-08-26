@@ -1,10 +1,10 @@
 import { beforeEach, assert, beforeAll, suite, test, expect } from 'vitest';
 
 import { pool, usersTableDDL } from './setup';
-import { userFixtures } from './fixtures';
+import { fixtures } from './fixtures';
 import { User } from '..';
 
-const eren = userFixtures.eren.user;
+const eren = fixtures.eren.user;
 
 suite('users table', () => {
     beforeAll(async () => {
@@ -37,7 +37,7 @@ suite('users table', () => {
     });
 
     test('username length exceeds the length', async () => {
-        let eren = userFixtures.eren.user;
+        let eren = fixtures.eren.user;
         // username exceeds
         eren.username = `erenerenerenerenereneren`;
 

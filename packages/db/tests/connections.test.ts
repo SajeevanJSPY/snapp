@@ -1,11 +1,11 @@
 import { beforeEach, assert, beforeAll, suite, test, expect } from 'vitest';
 
 import { pool, usersTableDDL, userConnectionsTableDDL } from './setup';
-import { userFixtures } from './fixtures';
+import { fixtures } from './fixtures';
 import { User, UserConnection } from '..';
 
-const eren = userFixtures.eren.user;
-const mikasa = userFixtures.mikasa.user;
+const eren = fixtures.eren.user;
+const mikasa = fixtures.mikasa.user;
 
 let user1: User;
 let user2: User;
