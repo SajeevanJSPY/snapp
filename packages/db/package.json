@@ -8,23 +8,17 @@
         "up": "docker-compose up -d",
         "down": "docker-compose down -v",
         "migrate": "dbmate migrate",
-        "prisma:pull": "prisma db pull",
-        "prisma:generate": "prisma generate",
         "test": "vitest"
     },
     "keywords": [],
     "author": "sajeevan",
     "license": "ISC",
     "packageManager": "pnpm@10.14.0",
-    "dependencies": {
-        "@prisma/client": "6.13.0"
-    },
     "devDependencies": {
         "@testcontainers/postgresql": "^11.5.0",
         "@types/node": "^20.19.8",
         "@types/pg": "^8.15.5",
         "pg": "^8.16.3",
-        "prisma": "^6.13.0",
         "testcontainers": "^11.5.1",
         "ts-node": "^10.9.2",
         "vitest": "^3.2.4"
