@@ -1,6 +1,7 @@
 import { QueryResultRow } from 'pg';
 
 import { query } from './client';
+import { User } from './users';
 
 export interface UserConnection extends QueryResultRow {
     user_id: number;
@@ -88,12 +89,17 @@ export class UserConnection {
         return connection.rows[0];
     }
 
-    static async getConnections(userId: number): Promise<UserConnection[]> {
-        const request = await query<UserConnection>(
-            `SELECT * FROM ${this.connectionTableS} WHERE user_id = $1`,
+    static async getConnections(userId: number): Promise<User[]> {
+        const connections = await query<User>(
+            `
+                SELECT u.*
+                FROM user_connections c
+                LEFT JOIN users u ON u.user_id = c.contact_id
+                WHERE c.user_id = $1;
+            `,
             [userId]
         );
-        return request.rows;
+        return connections.rows;
     }
 
     static async blockUser(userId: number, connectionId: number) {

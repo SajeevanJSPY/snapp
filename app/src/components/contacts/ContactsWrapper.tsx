@@ -1,13 +1,16 @@
 'use server';
 
-import { User } from '@snapp/db';
+import { User, UserConnection } from '@snapp/db';
 import ContactList from './ContactList';
+import { getUser } from '@/lib/auth';
 
 export default async function ContactsWrapper() {
+    const currentUser = await getUser()!;
+    const currentUserId = currentUser?.user_id!;
     let contacts: User[] = [];
 
     try {
-        contacts.push(await User.findByEmail("eren@begins.rmb"));
+        contacts = await UserConnection.getConnections(currentUserId);
     } catch (error) {
         throw new Error('Internal Error');
     }
