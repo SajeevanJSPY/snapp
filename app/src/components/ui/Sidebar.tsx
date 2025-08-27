@@ -1,5 +1,5 @@
-import { usePanelContext } from '@/context/PanelContext';
 import { Settings, UserPen } from 'lucide-react';
+import { usePanelContext } from '@/context/PanelContext';
 
 export default function Sidebar() {
     const { setPanel } = usePanelContext();

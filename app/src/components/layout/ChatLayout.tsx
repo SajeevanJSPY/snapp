@@ -1,27 +1,17 @@
 'use client';
 
-import { usePanelContext } from '@/context/PanelContext';
-import Chat from '@/components/chatbox/Chat';
 import { ReactNode } from 'react';
+
+import Chat from '@/components/chatbox/Chat';
 import { useIsMobile } from '@snapp/ui';
+import PanelLayout from './PanelLayout';
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
-    const { panel } = usePanelContext();
     const isMobile = useIsMobile();
 
     return (
         <main className="h-screen overflow-hidden block md:grid md:grid-cols-14">
-            {panel == 'chatbox' ? (
-                <section className="md:col-span-6 h-full bg-neutral">
-                    <Chat />
-                </section>
-            ) : panel == 'settings' ? (
-                <aside className="md:col-span-6 h-full bg-neutral">Settings</aside>
-            ) : panel == 'connections' ? (
-                <aside className="md:col-span-6 h-full bg-neutral">{children}</aside>
-            ) : (
-                ''
-            )}
+            <PanelLayout children={children} />
 
             {!isMobile ? (
                 <section className="md:col-span-8 h-full overflow-y-auto">
