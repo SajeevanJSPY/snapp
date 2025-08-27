@@ -1,13 +1,13 @@
 'use client';
 
-import { useChatContext } from '@/context/ChatPanelContext';
+import { usePanelContext } from '@/context/PanelContext';
 import ResponsiveButton from '../common/Button';
 import Image from 'next/image';
 import { ChevronLeft } from 'lucide-react';
 import { useIsMobile } from '@snapp/ui';
 
 export default function ChatBoxHeader() {
-    const { setIsChatBox, selectedUser } = useChatContext();
+    const { setPanel, selectedUser } = usePanelContext();
     const isMobile = useIsMobile();
 
     return (
@@ -17,7 +17,7 @@ export default function ChatBoxHeader() {
                     <ChevronLeft
                         onClick={e => {
                             e.preventDefault();
-                            setIsChatBox(false);
+                            setPanel('connections');
                         }}
                     />
                 </ResponsiveButton>
@@ -33,7 +33,7 @@ export default function ChatBoxHeader() {
                 className="w-7 h-7 rounded-full border-2 border-primary"
             />
             <div className="text-xs leading-tight">
-                <p className="font-medium">MIKASA</p>
+                <p className="font-medium">{selectedUser?.username.toUpperCase()}</p>
                 <p className="text-accent/70 text-[0.6rem]">online</p>
             </div>
         </header>

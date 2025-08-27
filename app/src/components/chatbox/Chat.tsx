@@ -1,11 +1,11 @@
-import { useChatContext } from '@/context/ChatPanelContext';
+import { usePanelContext } from '@/context/PanelContext';
 import ChatBox from './ChatBox';
 import ChatHeader from './Header';
 import ChatInput from './Input';
 import { MessageCircle } from 'lucide-react';
 
 export default function Chat() {
-    const { selectedUser } = useChatContext();
+    const { selectedUser } = usePanelContext();
 
     return (
         <>

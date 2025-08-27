@@ -1,15 +1,22 @@
 'use client';
 
 import Image from 'next/image';
-import { useChatContext } from '@/context/ChatPanelContext';
+import { usePanelContext } from '@/context/PanelContext';
 import { User } from '@snapp/db';
 
 export default function Contact({ contact }: { contact: User }) {
-    const { setIsChatBox, setSelectedUser } = useChatContext();
+    const { setPanel, setSelectedUser } = usePanelContext();
 
     return (
         <div className="flex content-around items-center p-2 cursor-pointer hover:bg-base-300 rounded-xl">
-            <div className="flex w-full items-center gap-4">
+            <div
+                className="flex w-full items-center gap-4"
+                onClick={e => {
+                    e.preventDefault();
+                    setSelectedUser(contact);
+                    setPanel('chatbox');
+                }}
+            >
                 <Image
                     src="/geto.jpeg"
                     alt={contact.username}
