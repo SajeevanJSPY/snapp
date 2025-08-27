@@ -29,6 +29,7 @@
         "@testcontainers/postgresql": "^11.5.0",
         "@types/node": "^20.19.8",
         "@types/pg": "^8.15.5",
+        "dbmate": "^2.28.0",
         "pg": "^8.16.3",
         "testcontainers": "^11.5.1",
         "ts-node": "^10.9.2",
