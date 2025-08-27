@@ -92,14 +92,57 @@ suite('messages table', () => {
             user1.user_id,
             ConversationType.Direct
         );
-        const message = await Conversation.createMessage(
+
+        await Conversation.createParticipant(conversation.conversation_id, user1.user_id);
+        await Conversation.createParticipant(conversation.conversation_id, user2.user_id);
+
+        const message1 = await Conversation.createMessage(
             conversation.conversation_id,
             user1.user_id,
             MessageType.Text,
             "Come on. Let's hurry up and go home... to our house"
         );
+        const message2 = await Conversation.createMessage(
+            conversation.conversation_id,
+            user2.user_id,
+            MessageType.Text,
+            "Okay. Let's go home"
+        );
+        assert.notDeepEqual(message1.message_id, message2.message_id);
+        assert.equal(message1.sender_id, user1.user_id);
+        assert.equal(message2.sender_id, user2.user_id);
+        assert.equal(message1.conversation_id, message2.conversation_id);
+    });
 
-        assert.equal(message.message_type, MessageType.Text);
-        assert.equal(message.sender_id, user1.user_id);
+    test('sender must be in the participants list to send message', async () => {
+        const conversation = await Conversation.createConversation(
+            user1.user_id,
+            ConversationType.Direct
+        );
+
+        await expect(
+            Conversation.createMessage(
+                conversation.conversation_id,
+                user2.user_id,
+                MessageType.Text,
+                "Come on. Let's hurry up and go home... to our house"
+            )
+        ).rejects.toThrowError(/sender must be in the conversation participant list/);
+    });
+
+    test('cannot send message with less than two participants', async () => {
+        const conversation = await Conversation.createConversation(
+            user1.user_id,
+            ConversationType.Direct
+        );
+        await Conversation.createParticipant(conversation.conversation_id, user1.user_id);
+        await expect(
+            Conversation.createMessage(
+                conversation.conversation_id,
+                user1.user_id,
+                MessageType.Text,
+                "Come on. Let's hurry up and go home... to our house"
+            )
+        ).rejects.toThrowError(/participants should be at least two people/);
     });
 });

@@ -2,7 +2,7 @@
 CREATE TYPE conversation_type AS ENUM ('direct', 'group');
 CREATE TABLE IF NOT EXISTS conversations (
     conversation_id SERIAL PRIMARY KEY,
-    title VARCHAR(40) CONSTRAINT title_not_empty CHECK (char_length(trim(title)) > 2),
+    title VARCHAR(40) CONSTRAINT chk_conversations_title_min_length CHECK (char_length(trim(title)) > 2),
     creator_id INTEGER NOT NULL REFERENCES users(user_id),
     conversation_type conversation_type NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS messages (
     conversation_id INTEGER NOT NULL REFERENCES conversations(conversation_id),
     sender_id INTEGER NOT NULL REFERENCES users(user_id),
     message_type message_type NOT NULL,
-    content TEXT NOT NULL CONSTRAINT chk_conversations_title_min_length CHECK (char_length(trim(content)) > 0),
+    content TEXT NOT NULL CONSTRAINT chk_messages_content_min_length CHECK (char_length(trim(content)) > 0),
     sent_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -58,6 +58,29 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER check_direct_participants
 BEFORE INSERT ON participants
 FOR EACH ROW EXECUTE FUNCTION enforce_direct_participants();
+
+CREATE OR REPLACE FUNCTION validate_message_sender_and_participants()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM participants
+        WHERE conversation_id = NEW.conversation_id
+            AND user_id = NEW.sender_id
+    ) THEN
+        RAISE EXCEPTION 'sender must be in the conversation participant list';
+    END IF;
+
+    IF (SELECT count(*) FROM participants WHERE conversation_id = NEW.conversation_id) < 2 THEN
+        RAISE EXCEPTION 'participants should be at least two people';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_message_validate_participants
+BEFORE INSERT ON messages
+FOR EACH ROW EXECUTE FUNCTION validate_message_sender_and_participants();
 
 -- migrate:down
 DROP TABLE IF EXISTS messages;
