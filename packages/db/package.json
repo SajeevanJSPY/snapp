@@ -2,17 +2,29 @@
     "name": "@snapp/db",
     "version": "0.0.1",
     "description": "snapp database",
+    "keywords": [
+        "snapp",
+        "database",
+        "postgresql"
+    ],
+    "homepage": "https://github.com/sajeevanjspy/snapp/snapp/tree/main/packages/db",
+    "bugs": "https://github.com/sajeevanjspy/snapp/issues",
+    "license": "ISC",
+    "author": "sajeevan",
     "main": "src/index.ts",
-    "types": "src/index.ts",
+    "repository": {
+        "url": "https://github.com/sajeevanjspy/snapp",
+        "type": "git",
+        "directory": "packages/db"
+    },
     "scripts": {
-        "up": "docker-compose up -d",
-        "down": "docker-compose down -v",
-        "migrate": "dbmate migrate",
+        "db:up": "docker-compose up -d",
+        "db:down": "docker-compose down -v",
+        "db:migrate": "dbmate migrate",
+        "typecheck": "tsc",
+        "clean": "rm -rf node_modules .turbo",
         "test": "vitest"
     },
-    "keywords": [],
-    "author": "sajeevan",
-    "license": "ISC",
     "devDependencies": {
         "@testcontainers/postgresql": "^11.5.0",
         "@types/node": "^20.19.8",
@@ -21,5 +33,9 @@
         "testcontainers": "^11.5.1",
         "ts-node": "^10.9.2",
         "vitest": "^3.2.4"
-    }
+    },
+    "engines": {
+        "node": ">=22.15.0"
+    },
+    "private": true
 }
