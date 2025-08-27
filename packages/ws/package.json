@@ -9,7 +9,6 @@
     },
     "author": "sajeevan",
     "license": "ISC",
-    "packageManager": "pnpm@10.14.0",
     "devDependencies": {
         "@types/node": "^20.19.8",
         "socket.io-client": "^4.8.1",

@@ -5,7 +5,6 @@
     "keywords": [],
     "author": "sajeevan",
     "license": "ISC",
-    "packageManager": "pnpm@10.14.0",
     "scripts": {
         "dev": "nodemon",
         "build": "next build && tsc --project tsconfig.server.json",
