@@ -51,14 +51,39 @@ export class Conversation {
 
     static async createConversation(
         creatorId: number,
-        conversationType: ConversationType
+        conversationType: ConversationType,
+        title?: string
     ): Promise<Conversation> {
+        const conversation = await query<Conversation>(
+            `
+                INSERT INTO ${this.conversationsTableS} (title, creator_id, conversation_type)
+                VALUES ($1, $2, $3) RETURNING *
+            `,
+            [title, creatorId, conversationType]
+        );
+
+        return conversation.rows[0];
+    }
+
+    static async createDirectConnection(creatorId: number): Promise<Conversation> {
         const conversation = await query<Conversation>(
             `
                 INSERT INTO ${this.conversationsTableS} (creator_id, conversation_type)
                 VALUES ($1, $2) RETURNING *
             `,
-            [creatorId, conversationType]
+            [creatorId, ConversationType.Direct]
+        );
+
+        return conversation.rows[0];
+    }
+
+    static async createGroupConnection(creatorId: number, title: string): Promise<Conversation> {
+        const conversation = await query<Conversation>(
+            `
+                INSERT INTO ${this.conversationsTableS} (title, creator_id, conversation_type)
+                VALUES ($1, $2, $3) RETURNING *
+            `,
+            [title, creatorId, ConversationType.Group]
         );
 
         return conversation.rows[0];

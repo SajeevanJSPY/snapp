@@ -2,7 +2,7 @@
 CREATE TYPE conversation_type AS ENUM ('direct', 'group');
 CREATE TABLE IF NOT EXISTS conversations (
     conversation_id SERIAL PRIMARY KEY,
-    title VARCHAR(40),
+    title VARCHAR(40) CONSTRAINT title_not_empty CHECK (char_length(trim(title)) > 2),
     creator_id INTEGER NOT NULL REFERENCES users(user_id),
     conversation_type conversation_type NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -22,10 +22,27 @@ CREATE TABLE IF NOT EXISTS messages (
     conversation_id INTEGER NOT NULL REFERENCES conversations(conversation_id),
     sender_id INTEGER NOT NULL REFERENCES users(user_id),
     message_type message_type NOT NULL,
-    content TEXT NOT NULL CONSTRAINT content_not_empty CHECK (char_length(trim(content)) > 0),
+    content TEXT NOT NULL CONSTRAINT chk_conversations_title_min_length CHECK (char_length(trim(content)) > 0),
     sent_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE OR REPLACE FUNCTION enforce_conversation_type_title_rules()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.conversation_type = 'direct' AND NEW.title <> '' THEN
+        RAISE EXCEPTION 'invalid_conversation: direct conversations must not have a title';
+    END IF;
+    IF NEW.conversation_type = 'group' AND NEW.title IS NULL THEN
+        RAISE EXCEPTION 'invalid_conversation: group conversations must have a title';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER enforce_conversation_type_title_rules_before_insert
+BEFORE INSERT ON conversations
+FOR EACH ROW EXECUTE FUNCTION enforce_conversation_type_title_rules();
 
 -- migrate:down
 DROP TABLE IF EXISTS messages;

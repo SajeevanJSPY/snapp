@@ -36,6 +36,24 @@ suite('conversation table', () => {
         assert.equal(conversation.creator_id, user1.user_id);
         assert.isNull(conversation.deleted_at);
     });
+
+    test('direct conversation cannot have a title', async () => {
+        await expect(
+            Conversation.createConversation(user1.user_id, ConversationType.Direct, 'group')
+        ).rejects.toThrowError(/direct conversations must not have a title/);
+    });
+
+    test('group conversation with empty title should fail or length must greater than characters 3', async () => {
+        await expect(
+            Conversation.createConversation(user1.user_id, ConversationType.Group)
+        ).rejects.toThrowError(/group conversations must have a title/);
+    });
+
+    test('group conversation with title shorter than 2 characters should fail', async () => {
+        await expect(
+            Conversation.createConversation(user1.user_id, ConversationType.Group, 'gr')
+        ).rejects.toThrowError(/violates check constraint/);
+    });
 });
 
 suite('participants table', () => {
