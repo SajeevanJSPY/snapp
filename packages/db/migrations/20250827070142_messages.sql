@@ -44,6 +44,21 @@ CREATE TRIGGER enforce_conversation_type_title_rules_before_insert
 BEFORE INSERT ON conversations
 FOR EACH ROW EXECUTE FUNCTION enforce_conversation_type_title_rules();
 
+CREATE OR REPLACE FUNCTION enforce_direct_participants()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT conversation_type FROM conversations WHERE conversation_id = NEW.conversation_id) = 'direct'
+    AND (SELECT count(*) FROM participants WHERE conversation_id = NEW.conversation_id) >= 2 THEN
+        RAISE EXCEPTION 'Direct conversations can have only 2 participants';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_direct_participants
+BEFORE INSERT ON participants
+FOR EACH ROW EXECUTE FUNCTION enforce_direct_participants();
+
 -- migrate:down
 DROP TABLE IF EXISTS messages;
 DROP TYPE IF EXISTS message_type;

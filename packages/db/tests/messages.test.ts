@@ -71,6 +71,19 @@ suite('participants table', () => {
         assert.equal(conversation.creator_id, participant.user_id);
         assert.equal(conversation.conversation_id, participant.conversation_id);
     });
+
+    test('direct conversation only allow two participants', async () => {
+        const conversation = await Conversation.createConversation(
+            user1.user_id,
+            ConversationType.Direct
+        );
+        await Conversation.createParticipant(conversation.conversation_id, user1.user_id);
+        await Conversation.createParticipant(conversation.conversation_id, user2.user_id);
+
+        await expect(
+            Conversation.createParticipant(conversation.conversation_id, user3.user_id)
+        ).rejects.toThrowError(/Direct conversations can have only 2 participants/);
+    });
 });
 
 suite('messages table', () => {
