@@ -27,3 +27,6 @@ export const sessionsTableDDL = getMigration(sessionsFilename);
 
 const userConnectionsFilename = '20250802173457_user_connections.sql';
 export const userConnectionsTableDDL = getMigration(userConnectionsFilename);
+
+const messagesFilename = '20250827070142_messages.sql';
+export const messagesTableDDL = getMigration(messagesFilename);
