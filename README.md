@@ -16,6 +16,15 @@
 
 ---
 
+## 🖥️ UI Screenshots
+
+<p align="center">
+  <img src="./assets/mobile-dark.png" alt="Mobile Dark" height="250" style="margin: 10px;" />
+  <img src="./assets/desktop-light.png" alt="Desktop Light" height="250" style="margin: 10px;" />
+</p>
+
+---
+
 ## 🧱 Tech Stack
 
 | Layer       | Tech                                                                                               |
