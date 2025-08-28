@@ -1,5 +1,6 @@
 import { SendHorizontal } from 'lucide-react';
-import ResponsiveButton from '../common/Button';
+
+import ResponsiveButton from '@/components/common/Button';
 
 export default function ChatBoxInput() {
     return (

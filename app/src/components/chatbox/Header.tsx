@@ -1,17 +1,20 @@
 'use client';
 
-import { usePanelContext } from '@/context/PanelContext';
-import ResponsiveButton from '../common/Button';
 import Image from 'next/image';
 import { ChevronLeft } from 'lucide-react';
+
 import { useIsMobile } from '@snapp/ui';
+import { usePanelContext } from '@/context/PanelContext';
+import ResponsiveButton from '@/components/common/Button';
 
 export default function ChatBoxHeader() {
     const { setPanel, selectedUser } = usePanelContext();
     const isMobile = useIsMobile();
 
     return (
-        <header className="flex items-center gap-2 h-[44px] pl-4 bg-neutral border-l-2 border-primary">
+        <header
+            className={`flex items-center gap-2 h-[44px] pl-4 ${isMobile ? 'bg-base-100' : 'bg-neutral border-l-2 border-primary'}`}
+        >
             {isMobile ? (
                 <ResponsiveButton>
                     <ChevronLeft

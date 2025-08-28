@@ -1,8 +1,9 @@
+import { MessageCircle } from 'lucide-react';
+
 import { usePanelContext } from '@/context/PanelContext';
 import ChatBox from './ChatBox';
 import ChatHeader from './Header';
 import ChatInput from './Input';
-import { MessageCircle } from 'lucide-react';
 
 export default function Chat() {
     const { selectedUser } = usePanelContext();
@@ -10,7 +11,7 @@ export default function Chat() {
     return (
         <>
             {selectedUser ? (
-                <div className="h-full flex flex-col">
+                <div className="h-screen w-full flex flex-col">
                     <ChatHeader />
                     <ChatBox />
                     <ChatInput />

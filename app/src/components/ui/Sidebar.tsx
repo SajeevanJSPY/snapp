@@ -6,7 +6,12 @@ export default function Sidebar() {
 
     return (
         <div className="w-[60px] shrink-0 flex flex-col gap-6 py-6 bg-base-200">
-            <div className="cursor-pointer flex items-center justify-center">
+            <div
+                className="cursor-pointer flex items-center justify-center"
+                onClick={() => {
+                    setPanel('connections');
+                }}
+            >
                 <UserPen />
             </div>
             <div

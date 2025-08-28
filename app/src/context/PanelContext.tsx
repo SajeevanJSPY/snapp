@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, ReactNode, useContext } from 'react';
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
 import { User } from '@snapp/db';
 import { useIsMobile } from '@snapp/ui';
 
@@ -19,6 +19,12 @@ export const PanelProvider = ({ children }: { children: ReactNode }) => {
     const [panel, _setPanel] = useState<Panel>('connections');
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const isMobile = useIsMobile();
+
+    useEffect(() => {
+        if (!isMobile && panel == 'chatbox') {
+            setPanel('connections');
+        }
+    }, [isMobile]);
 
     const setPanel = (panel: Panel) => {
         if (panel == 'chatbox' && !isMobile) {

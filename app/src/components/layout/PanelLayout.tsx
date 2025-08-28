@@ -8,21 +8,17 @@ export default function PanelLayout({ children }: { children: ReactNode }) {
     const { panel } = usePanelContext();
 
     return (
-        <aside className="md:col-span-6 h-full bg-neutral">
-            <div className="min-h-screen text-[0.75rem] flex">
-                <Sidebar />
-                {panel == 'chatbox' ? (
-                    <section className="md:col-span-6 h-full bg-neutral">
-                        <Chat />
-                    </section>
-                ) : panel == 'settings' ? (
-                    <aside>Settings</aside>
-                ) : panel == 'connections' ? (
-                    <>{children}</>
-                ) : (
-                    ''
-                )}
-            </div>
-        </aside>
+        <div className="min-h-screen text-[0.75rem] flex">
+            <Sidebar />
+            {panel == 'chatbox' ? (
+                <Chat />
+            ) : panel == 'settings' ? (
+                <aside>Settings</aside>
+            ) : panel == 'connections' ? (
+                <>{children}</>
+            ) : (
+                ''
+            )}
+        </div>
     );
 }
