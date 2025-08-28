@@ -2,6 +2,18 @@
     "$schema": "https://turborepo.com/schema.json",
     "ui": "tui",
     "tasks": {
+        "db:up": {
+            "dependsOn": [],
+            "outputs": []
+        },
+        "db:down": {
+            "dependsOn": [],
+            "outputs": []
+        },
+        "db:migrate": {
+            "dependsOn": [],
+            "outputs": []
+        },
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],

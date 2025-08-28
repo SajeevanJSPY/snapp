@@ -7,6 +7,9 @@
         "packages/*"
     ],
     "scripts": {
+        "db:up": "turbo run db:up --filter=@snapp/db",
+        "db:down": "turbo run db:down --filter=@snapp/db",
+        "db:migrate": "turbo run db:migrate --filter=@snapp/db",
         "build": "turbo build run",
         "dev": "turbo build dev --filter=snapp-app --cwd=app",
         "build:app": "turbo run build --filter=snapp-app",
