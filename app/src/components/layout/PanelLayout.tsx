@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { usePanelContext } from '@/context/PanelContext';
 import Chat from '../chatbox/Chat';
 import Sidebar from '../ui/Sidebar';
+import Settings from '../ui/Settings';
 
 export default function PanelLayout({ children }: { children: ReactNode }) {
     const { panel } = usePanelContext();
@@ -13,7 +14,7 @@ export default function PanelLayout({ children }: { children: ReactNode }) {
             {panel == 'chatbox' ? (
                 <Chat />
             ) : panel == 'settings' ? (
-                <aside>Settings</aside>
+                <Settings />
             ) : panel == 'connections' ? (
                 <>{children}</>
             ) : (
