@@ -11,13 +11,13 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
 
     return (
         <main className="h-screen overflow-hidden block md:grid md:grid-cols-14">
-            <aside className="md:col-span-6 h-full w-full bg-neutral">
+            <div className="md:col-span-6 h-full w-full bg-neutral">
                 <PanelLayout children={children} />
-            </aside>
+            </div>
             {!isMobile ? (
-                <section className="md:col-span-8 h-full">
+                <div className="md:col-span-8">
                     <Chat />
-                </section>
+                </div>
             ) : (
                 ''
             )}

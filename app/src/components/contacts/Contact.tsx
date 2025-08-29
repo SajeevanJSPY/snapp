@@ -8,7 +8,7 @@ export default function Contact({ contact }: { contact: User }) {
     const { setPanel, setSelectedUser } = usePanelContext();
 
     return (
-        <div className="flex content-around items-center p-2 cursor-pointer hover:bg-base-300 rounded-xl">
+        <li className="flex content-around items-center p-2 cursor-pointer hover:bg-base-300 rounded-xl">
             <div
                 className="flex w-full items-center gap-4"
                 onClick={e => {
@@ -30,11 +30,8 @@ export default function Contact({ contact }: { contact: User }) {
                         {contact.is_active ? 'active' : 'inactive'}
                     </p>
                 </div>
-                <button className="text-primary hover:text-primary-focus transition">
-                    <i className="fa fa-comment"></i>
-                </button>
             </div>
             <div>sent</div>
-        </div>
+        </li>
     );
 }

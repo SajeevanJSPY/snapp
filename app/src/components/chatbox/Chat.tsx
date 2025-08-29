@@ -9,7 +9,7 @@ export default function Chat() {
     const { selectedUser } = usePanelContext();
 
     return (
-        <>
+        <section className="h-full w-full">
             {selectedUser ? (
                 <div className="h-screen w-full flex flex-col">
                     <ChatHeader />
@@ -21,6 +21,6 @@ export default function Chat() {
                     <MessageCircle />
                 </div>
             )}
-        </>
+        </section>
     );
 }
