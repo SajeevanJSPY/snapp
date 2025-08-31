@@ -17,6 +17,10 @@ export default function PanelLayout({ children }: { children: ReactNode }) {
                 <Settings />
             ) : panel == 'connections' ? (
                 <>{children}</>
+            ) : panel == 'profile' ? (
+                <div>profile</div>
+            ) : panel == 'requests' ? (
+                <div>connection requests</div>
             ) : (
                 ''
             )}

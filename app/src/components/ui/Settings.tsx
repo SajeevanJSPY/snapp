@@ -1,7 +1,7 @@
 import { useThemeContext } from '@/context/ThemeContext';
 
 export default function Settings() {
-    const { theme, toggleTheme } = useThemeContext();
+    const { toggleTheme } = useThemeContext();
 
     return (
         <section

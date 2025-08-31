@@ -1,4 +1,4 @@
-import { Cog, MessageCircle } from 'lucide-react';
+import { Cog, Handshake, MessageCircle, UserPen } from 'lucide-react';
 
 import { usePanelContext } from '@/context/PanelContext';
 import ChatBox from './ChatBox';
@@ -22,6 +22,10 @@ export default function Chat() {
                         <MessageCircle />
                     ) : panel == 'settings' ? (
                         <Cog />
+                    ) : panel == 'profile' ? (
+                        <UserPen />
+                    ) : panel == 'requests' ? (
+                        <Handshake />
                     ) : (
                         ''
                     )}

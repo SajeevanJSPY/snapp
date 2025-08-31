@@ -4,7 +4,7 @@ import React, { createContext, useState, ReactNode, useContext, useEffect } from
 import { User } from '@snapp/db';
 import { useIsMobile } from '@snapp/ui';
 
-export type Panel = 'connections' | 'settings' | 'chatbox';
+export type Panel = 'profile' | 'connections' | 'settings' | 'requests' | 'chatbox';
 
 interface PanelContextType {
     panel: Panel;
