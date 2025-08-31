@@ -30,7 +30,7 @@
 | Layer       | Tech                                                                                               |
 | ----------- | -------------------------------------------------------------------------------------------------- |
 | Frontend    | [Next.js](https://nextjs.org) (App Router)                                                         |
-| Styling     | [Tailwind CSS](https://tailwindcss.com) + [Framer Motion](https://www.framer.com/motion/)          |
+| Styling     | [Tailwind CSS](https://tailwindcss.com)                                                            |
 | Realtime    | [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)                      |
 | Backend API | [Next.js API routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) |
 | Auth        | [Auth.js](https://authjs.dev) with JWT sessions                                                    |
