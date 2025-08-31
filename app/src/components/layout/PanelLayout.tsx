@@ -2,9 +2,7 @@ import { ReactNode } from 'react';
 
 import { usePanelContext } from '@/context/PanelContext';
 import Chat from '../chatbox/Chat';
-import Sidebar from '../ui/Sidebar';
-import Settings from '../ui/Settings';
-import Profile from '../ui/Profile';
+import { Sidebar, Settings, Profile } from '../ui';
 
 export default function PanelLayout({ children }: { children: ReactNode }) {
     const { panel } = usePanelContext();
