@@ -1,6 +1,7 @@
 import { QueryResultRow } from 'pg';
+
 import { query } from './client';
-import { User } from '.';
+import { DatabaseError, User } from '.';
 
 export interface Session extends QueryResultRow {
     session_id: string;
@@ -16,11 +17,13 @@ export class Session {
     private static readonly sessionTableS = this.schema + '.' + this.sessionTable;
 
     static async create(userId: number, deviceId?: string): Promise<Session> {
-        const session = await query<Session>(
+        const result = await query<Session>(
             `INSERT INTO ${this.sessionTableS} (user_id, current_device_id) VALUES ($1, $2) RETURNING *`,
             [userId, deviceId]
         );
-        return session.rows[0];
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert session');
+
+        return result.rows[0];
     }
 
     static async getCurrent(userEmail: string): Promise<Session> {
@@ -29,8 +32,7 @@ export class Session {
             `SELECT * FROM ${this.sessionTableS} WHERE user_id = $1`,
             [user.user_id]
         );
-
-        if (!result.rows[0]) throw new Error('Session not found');
+        if (!result.rows[0]) throw DatabaseError.dataNotFoundError('unable to find the session');
         return result.rows[0];
     }
 

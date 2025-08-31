@@ -1,5 +1,7 @@
 import { QueryResultRow } from 'pg';
+
 import { query } from './client';
+import { DatabaseError } from '.';
 
 export enum ConversationType {
     Direct = 'direct',
@@ -54,51 +56,57 @@ export class Conversation {
         conversationType: ConversationType,
         title?: string
     ): Promise<Conversation> {
-        const conversation = await query<Conversation>(
+        const result = await query<Conversation>(
             `
                 INSERT INTO ${this.conversationsTableS} (title, creator_id, conversation_type)
                 VALUES ($1, $2, $3) RETURNING *
             `,
             [title, creatorId, conversationType]
         );
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert the conversation');
 
-        return conversation.rows[0];
+        return result.rows[0];
     }
 
     static async createDirectConnection(creatorId: number): Promise<Conversation> {
-        const conversation = await query<Conversation>(
+        const result = await query<Conversation>(
             `
                 INSERT INTO ${this.conversationsTableS} (creator_id, conversation_type)
                 VALUES ($1, $2) RETURNING *
             `,
             [creatorId, ConversationType.Direct]
         );
+        if (!result.rows[0])
+            throw DatabaseError.upsertError('unable to create the direct conversation');
 
-        return conversation.rows[0];
+        return result.rows[0];
     }
 
     static async createGroupConnection(creatorId: number, title: string): Promise<Conversation> {
-        const conversation = await query<Conversation>(
+        const result = await query<Conversation>(
             `
                 INSERT INTO ${this.conversationsTableS} (title, creator_id, conversation_type)
                 VALUES ($1, $2, $3) RETURNING *
             `,
             [title, creatorId, ConversationType.Group]
         );
+        if (!result.rows[0])
+            throw DatabaseError.upsertError('unable to create the group conversation');
 
-        return conversation.rows[0];
+        return result.rows[0];
     }
 
     static async createParticipant(conversationId: number, userId: number): Promise<Participant> {
-        const participant = await query<Participant>(
+        const result = await query<Participant>(
             `
                 INSERT INTO ${this.participantsTableS} (conversation_id, user_id)
                 VALUES ($1, $2) RETURNING *
             `,
             [conversationId, userId]
         );
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert the participant');
 
-        return participant.rows[0];
+        return result.rows[0];
     }
 
     static async createMessage(
@@ -107,14 +115,15 @@ export class Conversation {
         messageType: MessageType,
         content: string
     ): Promise<Message> {
-        const message = await query<Message>(
+        const result = await query<Message>(
             `
                 INSERT INTO ${this.messagesTableS} (conversation_id, sender_id, message_type, content)
                 VALUES ($1, $2, $3, $4) RETURNING *
             `,
             [conversationId, senderId, messageType, content]
         );
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert the message');
 
-        return message.rows[0];
+        return result.rows[0];
     }
 }

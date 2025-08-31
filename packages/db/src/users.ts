@@ -1,5 +1,7 @@
 import { QueryResultRow } from 'pg';
+
 import { query } from './client';
+import { DatabaseError } from '.';
 
 export interface User extends QueryResultRow {
     user_id: number;
@@ -28,8 +30,7 @@ export class User {
             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
             [email, username, about, password, avatar]
         );
-
-        if (!result.rows[0]) throw new Error('failed to insert user');
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert the user');
 
         let user = result.rows[0];
         if (user.avatar) {
@@ -42,7 +43,7 @@ export class User {
         const result = await query<User>(`SELECT * FROM ${this.userTableS} WHERE email = $1`, [
             email,
         ]);
-        if (!result.rows[0]) throw new Error('User not found');
+        if (!result.rows[0]) throw DatabaseError.dataNotFoundError('unable to find the user');
 
         let user = result.rows[0];
         if (user.avatar) {

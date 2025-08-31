@@ -37,7 +37,7 @@ suite('user_connection_requests table', () => {
 
         await UserConnection.deleteRequest(user2.user_id, user1.user_id);
         await expect(UserConnection.getRequest(user2.user_id, user1.user_id)).rejects.toThrowError(
-            /user request not found/
+            /unable to find the connection request/
         );
     });
 });

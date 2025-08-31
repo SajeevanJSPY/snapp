@@ -2,6 +2,7 @@ import { QueryResultRow } from 'pg';
 
 import { query } from './client';
 import { User } from './users';
+import { DatabaseError } from '.';
 
 export interface UserConnection extends QueryResultRow {
     user_id: number;
@@ -30,29 +31,36 @@ export class UserConnection {
         userId: number,
         connectionId: number
     ): Promise<UserConnectionRequest> {
-        const request = await query<UserConnectionRequest>(
+        const result = await query<UserConnectionRequest>(
             `INSERT INTO ${this.requestTableS} (request_from_id, request_to_id) VALUES ($1, $2) RETURNING *`,
             [userId, connectionId]
         );
+        if (!result.rows[0])
+            throw DatabaseError.upsertError('unable to create the connection request');
 
-        return request.rows[0];
+        return result.rows[0];
     }
 
     static async getRequest(userId: number, connectionId: number): Promise<UserConnectionRequest> {
-        const request = await query<UserConnectionRequest>(
+        const result = await query<UserConnectionRequest>(
             `SELECT * FROM ${this.requestTableS} WHERE request_from_id = $1 AND request_to_id = $2`,
             [connectionId, userId]
         );
-        if (request.rowCount == 0) throw new Error('user request not found');
-        return request.rows[0];
+        if (result.rowCount == 0)
+            throw DatabaseError.dataNotFoundError('unable to find the connection request');
+
+        return result.rows[0];
     }
 
     static async getRequests(userId: number): Promise<UserConnectionRequest[]> {
-        const request = await query<UserConnectionRequest>(
+        const result = await query<UserConnectionRequest>(
             `SELECT * FROM ${this.requestTableS} WHERE request_to_id = $1`,
             [userId]
         );
-        return request.rows;
+        if (result.rowCount == 0)
+            throw DatabaseError.dataNotFoundError('no connection requests were found');
+
+        return result.rows;
     }
 
     static async deleteRequest(userId: number, connectionId: number) {
@@ -73,24 +81,29 @@ export class UserConnection {
         userId: number,
         connectionId: number
     ): Promise<UserConnection> {
-        const connection = await query<UserConnection>(
+        const result = await query<UserConnection>(
             `INSERT INTO ${this.connectionTableS} (user_id, contact_id) VALUES ($1, $2) RETURNING *`,
             [userId, connectionId]
         );
-        return connection.rows[0];
+        if (result.rowCount == 0)
+            throw DatabaseError.upsertError('unable to insert the connection');
+
+        return result.rows[0];
     }
 
     static async getConnection(userId: number, connectionId: number): Promise<UserConnection> {
-        const connection = await query<UserConnection>(
+        const result = await query<UserConnection>(
             `SELECT * FROM ${this.connectionTableS} WHERE user_id = $1 AND contact_id = $2`,
             [userId, connectionId]
         );
-        if (connection.rowCount == 0) throw new Error('user connection not found');
-        return connection.rows[0];
+        if (result.rowCount == 0)
+            throw DatabaseError.dataNotFoundError('unable to find the connection');
+
+        return result.rows[0];
     }
 
     static async getConnections(userId: number): Promise<User[]> {
-        const connections = await query<User>(
+        const result = await query<User>(
             `
                 SELECT u.*
                 FROM user_connections c
@@ -99,7 +112,10 @@ export class UserConnection {
             `,
             [userId]
         );
-        return connections.rows;
+        if (result.rowCount == 0)
+            throw DatabaseError.dataNotFoundError('no connections were found');
+
+        return result.rows;
     }
 
     static async blockUser(userId: number, connectionId: number) {

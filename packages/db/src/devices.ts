@@ -1,6 +1,7 @@
 import { QueryResultRow } from 'pg';
 
 import { query } from './client';
+import { DatabaseError } from '.';
 
 export interface Device extends QueryResultRow {
     id: number;
@@ -22,11 +23,13 @@ export class Device {
         userAgent?: string,
         refreshToken?: string
     ): Promise<Device> {
-        const device = await query<Device>(
+        const result = await query<Device>(
             `INSERT INTO ${this.deviceTableS} (user_id, user_agent, refresh_token) VALUES ($1, $2, $3) RETURNING *`,
             [userId, userAgent, refreshToken]
         );
-        return device.rows[0];
+        if (!result.rows[0]) throw DatabaseError.upsertError('unable to insert the device');
+
+        return result.rows[0];
     }
 
     static async getAll(userId: number): Promise<Device[]> {
@@ -35,7 +38,7 @@ export class Device {
             [userId]
         );
 
-        if (devices.rowCount == 0) throw new Error('no device were found');
+        if (devices.rowCount == 0) throw DatabaseError.dataNotFoundError('no devices were found');
         return devices.rows;
     }
 }
