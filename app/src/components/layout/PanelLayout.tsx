@@ -4,6 +4,7 @@ import { usePanelContext } from '@/context/PanelContext';
 import Chat from '../chatbox/Chat';
 import Sidebar from '../ui/Sidebar';
 import Settings from '../ui/Settings';
+import Profile from '../ui/Profile';
 
 export default function PanelLayout({ children }: { children: ReactNode }) {
     const { panel } = usePanelContext();
@@ -18,7 +19,7 @@ export default function PanelLayout({ children }: { children: ReactNode }) {
             ) : panel == 'connections' ? (
                 <>{children}</>
             ) : panel == 'profile' ? (
-                <div>profile</div>
+                <Profile />
             ) : panel == 'requests' ? (
                 <div>connection requests</div>
             ) : (
