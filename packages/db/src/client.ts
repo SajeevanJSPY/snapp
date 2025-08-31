@@ -1,12 +1,6 @@
 import { Pool, QueryResult, QueryResultRow, DatabaseError as PgError } from 'pg';
-import {
-    DatabaseErrorFactory,
-    err,
-    GenericDatabaseError,
-    ok,
-    Result,
-    UnknownDatabaseError,
-} from './errors';
+import { DatabaseError } from '.';
+import { err, ok, Result } from './errors';
 
 let currentPool: Pool | null = null;
 
@@ -29,13 +23,20 @@ export async function query<T extends QueryResultRow = any>(
     params?: any[]
 ): Promise<QueryResult<T>> {
     const pool = getPool();
-    return pool.query<T>(text, params);
+    try {
+        return pool.query<T>(text, params);
+    } catch (e) {
+        if (e instanceof PgError) {
+            throw DatabaseError.fromPgError(e);
+        }
+        throw DatabaseError.unknownError();
+    }
 }
 
 export async function safeQuery<T extends QueryResultRow = any>(
     text: string,
     params?: any[]
-): Promise<Result<QueryResult<T>, GenericDatabaseError>> {
+): Promise<Result<QueryResult<T>, DatabaseError>> {
     const pool = getPool();
 
     try {
@@ -43,10 +44,8 @@ export async function safeQuery<T extends QueryResultRow = any>(
         return ok(result);
     } catch (e) {
         if (e instanceof PgError) {
-            return err(DatabaseErrorFactory.fromPgError(e));
+            return err(DatabaseError.fromPgError(e));
         }
-        return err(
-            new UnknownDatabaseError('this error not coming from the pg Driver DatabaseError')
-        );
+        return err(DatabaseError.unknownError('unknown_error: Non-Postgres error encountered'));
     }
 }

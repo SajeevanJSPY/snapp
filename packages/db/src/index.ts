@@ -6,6 +6,7 @@ export { Device } from './devices';
 export { Session } from './sessions';
 export { UserConnection } from './connections';
 export { Conversation, ConversationType, MessageType } from './messages';
+export { DatabaseError } from './errors';
 export { healthCheck } from './helpers';
 
 const pool = new Pool({
