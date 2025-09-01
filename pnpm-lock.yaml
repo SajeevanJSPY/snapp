@@ -20,9 +20,6 @@ importers:
       '@snapp/db':
         specifier: workspace:*
         version: link:../packages/db
-      '@snapp/ui':
-        specifier: workspace:*
-        version: link:../packages/ui
       '@snapp/ws':
         specifier: workspace:*
         version: link:../packages/ws

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { tailwindCssBreakpoints } from '../breakpoints';
+import { tailwindCssBreakpoints } from '@/utils';
 
 export function useIsMobile() {
     const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);

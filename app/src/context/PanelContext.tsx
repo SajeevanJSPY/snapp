@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
 import { User } from '@snapp/db';
-import { useIsMobile } from '@snapp/ui';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export type Panel = 'profile' | 'connections' | 'settings' | 'requests' | 'chatbox';
 

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { ChevronLeft } from 'lucide-react';
 
-import { useIsMobile } from '@snapp/ui';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePanelContext } from '@/context/PanelContext';
 import ResponsiveButton from '@/components/common/Button';
 

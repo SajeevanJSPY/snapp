@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 
 import Chat from '@/components/chatbox/Chat';
-import { useIsMobile } from '@snapp/ui';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import PanelLayout from './PanelLayout';
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
