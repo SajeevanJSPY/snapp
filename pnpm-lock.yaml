@@ -78,9 +78,12 @@ importers:
 
   packages/auth:
     devDependencies:
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.4(@types/node@20.19.8)(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)
+      '@types/node':
+        specifier: ^20.19.8
+        version: 20.19.8
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.19.8)(typescript@5.9.2)
 
   packages/db:
     devDependencies:

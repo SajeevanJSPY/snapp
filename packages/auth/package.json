@@ -1,0 +1,30 @@
+{
+    "name": "@snapp/auth",
+    "version": "0.0.1",
+    "description": "auth related functionalities",
+    "keywords": [
+        "auth",
+        "jwt"
+    ],
+    "homepage": "https://github.com/sajeevanjspy/snapp/snapp/tree/main/packages/auth",
+    "bugs": "https://github.com/sajeevanjspy/snapp/issues",
+    "license": "ISC",
+    "author": "sajeevan",
+    "main": "src/index.ts",
+    "repository": {
+        "url": "https://github.com/sajeevanjspy/snapp",
+        "type": "git",
+        "directory": "packages/auth"
+    },
+    "scripts": {
+        "typecheck": "tsc"
+    },
+    "devDependencies": {
+        "@types/node": "^20.19.8",
+        "ts-node": "^10.9.2"
+    },
+    "engines": {
+        "node": ">=22.15.0"
+    },
+    "private": true
+}
