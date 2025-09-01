@@ -19,7 +19,11 @@
     "scripts": {
         "typecheck": "tsc"
     },
+    "dependencies": {
+        "jsonwebtoken": "^9.0.2"
+    },
     "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.10",
         "@types/node": "^20.19.8",
         "ts-node": "^10.9.2"
     },
